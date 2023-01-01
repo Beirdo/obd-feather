@@ -1,0 +1,5 @@
+(sym_lib_table
+  (lib (name "SparkFun-Connectors")(type "KiCad")(uri "${KIPRJMOD}/library/Sparkfun/SparkFun-Connectors.kicad_sym")(options "")(descr ""))
+  (lib (name "SparkFun-DiscreteSemi")(type "KiCad")(uri "${KIPRJMOD}/library/Sparkfun/SparkFun-DiscreteSemi.kicad_sym")(options "")(descr ""))
+  (lib (name "UltraLibrarian")(type "KiCad")(uri "${KIPRJMOD}/library/UltraLibrarian/ultralibrarian.kicad_sym")(options "")(descr ""))
+)
