@@ -5,8 +5,8 @@
   (paper "A4")
 
   (title_block
-    (title "Vehicle CAN Collector")
-    (date "2022-12-29")
+    (title "QWIIC OBDII Interface")
+    (date "2023-01-03")
     (rev "1")
     (company "Gavin Hurlbut")
   )

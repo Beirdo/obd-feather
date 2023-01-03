@@ -4,6 +4,11 @@
 
   (paper "A4")
 
+  (title_block
+    (title "QWIIC OBDII Interface")
+    (date "2023-01-03")
+  )
+
   (lib_symbols
     (symbol "Analog_ADC:MCP3423" (pin_names (offset 1.016)) (in_bom yes) (on_board yes)
       (property "Reference" "U" (id 0) (at -2.54 11.43 0)
