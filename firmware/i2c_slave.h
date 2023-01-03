@@ -28,6 +28,8 @@ extern "C" {
         I2C_REG_COUNT,
     };
 
+    extern char i2c_error;
+    
     void i2c_slave_init(void);
     void ssp1_isr(void);
     void i2c_rx_kick(void);

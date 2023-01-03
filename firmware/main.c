@@ -15,7 +15,7 @@
 
 /* CONFIG1 */
 #pragma config FEXTOSC = OFF    // External Oscillator Mode Selection bits (Oscillator not enabled)
-#pragma config HFINTOSC_32MHZ// Power-up Default Value for COSC bits (HFINTOSC (32 MHz))
+#pragma config RSTOSC = HFINTOSC_32MHZ   // Power-up Default Value for COSC bits (HFINTOSC (32 MHz))
 #pragma config CLKOUTEN = OFF   // Clock Out Enable bit (CLKOUT function is disabled; I/O function on RA4)
 #pragma config VDDAR = HI       // VDD Range Analog Calibration Selection bit (Internal analog systems are calibrated for operation between VDD = 2.3V - 5.5V)
 
@@ -52,13 +52,15 @@
 #include <xc.h>
 #include <proc/pic16f15225.h>
 
-#include <main.h>
-#include <receiver.h>
-#include <transmitter.h>
-#include <i2c_slave.h>
+#include "main.h"
+#include "receiver.h"
+#include "transmitter.h"
+#include "i2c_slave.h"
+#include "interrupt.h"
 
 void init(void);
 void main_loop(void);
+void __interrupt() global_isr(void);
 
 const unsigned short int j1850_timings[TYPE_COUNT][INDEX_COUNT] = {
     {
@@ -79,6 +81,10 @@ const unsigned short int j1850_timings[TYPE_COUNT][INDEX_COUNT] = {
     }
 };
 
+static char sae_pwm_read = 0;
+static char sae_pwm = 0;
+
+
 /*
  * 
  */
@@ -94,9 +100,6 @@ int main(int argc, char** argv) {
 }
 
 char get_sae_pwm(char force) {
-    static sae_pwm_read = 0;
-    static sae_pwm = 0;
-    
     if (!sae_pwm_read || force) {
         sae_pwm = !(!PORTAbits.RA5);
     }
@@ -197,7 +200,7 @@ void main_loop(void) {
     
 }
 
-void interrupt global_isr(void) {
+void __interrupt() global_isr(void) {
     /* CCP1 interrupt */
     if (INTCONbits.PEIE && PIE1bits.CCP1IE && PIR1bits.CCP1IF) {
         ccp1_isr();
@@ -218,4 +221,6 @@ void interrupt global_isr(void) {
     if (INTCONbits.PEIE && PIE1bits.SSP1IE && PIR1bits.SSP1IF) {
         ssp1_isr();
     }
+    
+    interrupt_update(IRQ_I2C_ERROR, i2c_error);
 }

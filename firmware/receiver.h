@@ -12,13 +12,13 @@
 extern "C" {
 #endif
 
-#include <ringbuf.h>
+#include "ringbuf.h"
     
 #define MAX_RX_BUF      12
 
     extern char rx_protocol_error;
     extern char rx_buffers;
-    extern ringbuf_t rx_ringbuf;
+    extern ringbuf_t *rx_ringbuf;
     
     void receiver_init(void);
     void ccp1_isr(void);

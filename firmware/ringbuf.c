@@ -6,36 +6,24 @@
  */
 
 #include <stdlib.h>
+#include "ringbuf.h"
 
-#include <ringbuf.h>
+ringbuf_t ringbuffers[2];
 
-ringbuf_t *ringbuf_create(short int buf_size, char *notify) {
-    if (buf_size > MAX_RINGBUF_SIZE) {
-        buf_size = MAX_RINGBUF_SIZE;
-    }
-
-    if (buf_size <= 0) {
+ringbuf_t *ringbuf_create(char index, char *notify) {
+    if (index > 2) {
         return NULL;
     }
     
-    ringbuf_t *rb = (ringbuf_t *)malloc(sizeof(ringbuf_t));
-    if (!rb) {
-        return rb;
-    }
-    
-    rb->buf = (unsigned char *)malloc(buf_size);
-    if (!rb->buf) {
-        free(rb);
-        return NULL;
-    }
-    
-    rb->buf_size = buf_size;
+    ringbuf_t *rb = &ringbuffers[2];
     rb->head = 0;
     rb->tail = 0;    
     rb->notify = notify;
     if (notify) {
         *notify = 0;
     }
+    
+    return rb;
 }
 
 int ringbuf_write(ringbuf_t *rb, unsigned char *buf, int count) {
@@ -59,29 +47,29 @@ int ringbuf_write(ringbuf_t *rb, unsigned char *buf, int count) {
         return 0;
     }
     
-    int tail = rb->tail;
+    unsigned short int tail = rb->tail;
     
     rb->buf[tail++] = CH_SOF;
-    tail %= rb->buf_size;
+    tail %= RINGBUF_SIZE;
 
     for (i = 0; i < count; i++) {
         unsigned char ch = buf[i];
         if (ch == CH_SOF || ch == CH_ESC) {
             rb->buf[tail++] = CH_ESC;
-            tail %= rb->buf_size;
+            tail %= RINGBUF_SIZE;
             rb->buf[tail++] = ch ^ 0x80;
         } else {
             rb->buf[tail++] = ch;
         }
-        tail %= rb->buf_size;
+        tail %= RINGBUF_SIZE;
     }
     
     rb->buf[tail++] = CH_SOF;
-    tail %= rb->buf_size;
+    tail %= RINGBUF_SIZE;
 
     rb->tail = tail;
     if (rb->notify) {
-        *(rb->notify)++;
+        (*rb->notify)++;
     }
     return count;
 }
@@ -91,14 +79,14 @@ int ringbuf_read(ringbuf_t *rb, unsigned char *buf, int count) {
         return 0;
     }
     
-    int head = rb->head;
-    int tail = rb->tail;
+    unsigned short int head = rb->head;
+    unsigned short int tail = rb->tail;
     int i;
 
     /* search for SOF */
     for (head = rb->head, tail = rb->tail; 
             head != tail && rb->buf[head] != CH_SOF;
-            head = (head + 1) % rb->buf_size);
+            head = (head + 1) % RINGBUF_SIZE);
     
     if (head == tail) {
         rb->head = rb->tail;
@@ -107,7 +95,7 @@ int ringbuf_read(ringbuf_t *rb, unsigned char *buf, int count) {
     
     /* Now eat all SOF */
     for (; head != tail && rb->buf[head] == CH_SOF;
-            head = (head + 1) % rb->buf_size);
+            head = (head + 1) % RINGBUF_SIZE);
 
     if (head == tail) {
         rb->head = rb->tail;
@@ -116,11 +104,11 @@ int ringbuf_read(ringbuf_t *rb, unsigned char *buf, int count) {
     
     /* Un-byte-stuff up to the next SOF, up to count output bytes */
     for (i = 0; i < count && rb->buf[head] != CH_SOF && head != tail; 
-            head = (head + 1) % rb->buf_size, i++) {
+            head = (head + 1) % RINGBUF_SIZE, i++) {
         unsigned char ch = rb->buf[head];
         
         if (ch == CH_ESC) {
-            head = (head + 1) % rb->buf_size;
+            head = (head + 1) % RINGBUF_SIZE;
             ch = rb->buf[head] ^ 0x80;
         }
         buf[i] = ch;
@@ -130,10 +118,7 @@ int ringbuf_read(ringbuf_t *rb, unsigned char *buf, int count) {
     char success = (head != tail && rb->buf[head] != CH_SOF);
     
     if (success && rb->notify) {
-        *(rb->notify)--;
-        if (*(rb->notify) < 0) {
-            *(rb->notify) = 0;
-        }
+        (*rb->notify)--;
     }
     
     return success;
@@ -144,7 +129,7 @@ short int ringbuf_avail(ringbuf_t *rb) {
         return 0;
     }
     
-    return (rb->tail - rb->head + rb->buf_size) % rb->buf_size;
+    return (rb->tail - rb->head + RINGBUF_SIZE) % RINGBUF_SIZE;
 }
 
 short int ringbuf_free(ringbuf_t *rb) {
@@ -152,5 +137,5 @@ short int ringbuf_free(ringbuf_t *rb) {
         return 0;
     }
     
-    return (rb->head - rb->tail - 1 + rb->buf_size) % rb->buf_size; 
+    return (rb->head - rb->tail - 1 + RINGBUF_SIZE) % RINGBUF_SIZE; 
 }

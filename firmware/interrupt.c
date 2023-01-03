@@ -5,13 +5,15 @@
  * Created on January 2, 2023, 9:31 PM
  */
 
+#include <xc.h>
 #include <proc/pic16f15225.h>
 
-#include <interrupt.h>
+#include "interrupt.h"
 
 
 unsigned char irq_enable;
 unsigned char irq_flags;
+unsigned char irq_clear_on_write;
 
 void interrupt_init(void) {
     irq_enable = 0x00;
@@ -21,7 +23,7 @@ void interrupt_init(void) {
 }
 
 void interrupt_update(char index, char value) {
-    unsigned char bitmask = 1 << index;
+    unsigned char bitmask = (unsigned char)(1 << index);
     
     if (value) {
         irq_flags |= bitmask;
@@ -42,7 +44,7 @@ void interrupt_assert(void) {
 }
 
 char interrupt_active(char index) {
-    unsigned char bitmask = 1 << index;
+    unsigned char bitmask = (unsigned char)(1 << index);
     unsigned char irq_masked = irq_enable & irq_flags;
     
     return !(!(irq_masked & bitmask));

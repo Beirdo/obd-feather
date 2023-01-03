@@ -5,10 +5,12 @@
  * Created on January 2, 2023, 4:51 PM
  */
 
+#include <xc.h>
 #include <proc/pic16f15225.h>
 
-#include <transmitter.h>
-#include <ringbuf.h>
+#include "main.h"
+#include "transmitter.h"
+#include "ringbuf.h"
 
 
 #define TX_INTERFRAME   -10     /* 5us */
@@ -25,12 +27,12 @@ char tx_space_available;
 ringbuf_t *tx_ringbuf;
 
 void transmitter_update_flags(void);
-unsigned short int transmitter_next_trigger(unsigned short int *timings,
-        char index);
+unsigned short int transmitter_next_trigger(const unsigned short int *timings,
+        int index);
 
 void transmitter_init(void) {
     tx_active = 0;
-    tx_ringbuf = ringbuf_create(MAX_RINGBUF_SIZE, NULL);
+    tx_ringbuf = ringbuf_create(1, NULL);
     
     transmitter_update_flags();
 
@@ -48,14 +50,14 @@ void transmitter_update_flags(void) {
     tx_space_available = (ringbuf_avail(tx_ringbuf) >= MAX_TX_BUF);
 };
 
-unsigned short int transmitter_next_trigger(unsigned short int *timings,
-        char index) {
-    unsigned short int now = TMR1L | (TMR1H << 8);
+unsigned short int transmitter_next_trigger(const unsigned short int *timings,
+        int index) {
+    unsigned short int now = (unsigned short int)(TMR1L | (TMR1H << 8));
 
     if (index < 0) {
-        return now - index;
+        return (unsigned short int)( (unsigned int)((int)now - index) & 0xFFFF);
     }
-    return now + timings[index];
+    return (unsigned short int)((now + timings[index]) & 0xFFFF);
 }
 
 void transmitter_kick(void) {
@@ -65,11 +67,11 @@ void transmitter_kick(void) {
 
     CCP2CON = 0x00;     /* To switch modes, must be disabled first */
 
-    char sae_pwm = get_sae_pwm(!rx_timer_active);
-    unsigned short int *timings = &j1850_timings[sae_pwm];
+    char sae_pwm = get_sae_pwm(1);
+    const unsigned short int *timings = j1850_timings[sae_pwm];
     
     /* The transmitter is being kicked with a new buffer to send */
-    tx_count = ringbuf_read(tx_ringbuf, tx_buffer, MAX_TX_BUF);
+    tx_count = (char)ringbuf_read(tx_ringbuf, tx_buffer, MAX_TX_BUF);
     tx_read_byte = 0;
     transmitter_update_flags();
     
@@ -79,7 +81,7 @@ void transmitter_kick(void) {
    
     tx_active = 1;
     
-    CCPR2 = transmitter_next_trigger(timings, -4);
+    CCPR2 = (unsigned short int)transmitter_next_trigger(timings, TX_INTERFRAME);
     CCP2CON = 0x89;     /* Trigger low for pre-SOF */    
 }
 
@@ -87,8 +89,8 @@ void ccp2_isr(void) {
     unsigned short int next_trigger;
     char this_bit = 0;
     char current_level;
-    char sae_pwm = get_sae_pwm(!rx_timer_active);
-    unsigned short int *timings = &j1850_timings[sae_pwm];
+    char sae_pwm = get_sae_pwm(0);
+    const unsigned short int *timings = j1850_timings[sae_pwm];
     char index;
     
     PIR2bits.CCP2IF = 1;

@@ -12,14 +12,14 @@
 extern "C" {
 #endif
 
-#include <ringbuf.h>
+#include "ringbuf.h"
     
 #define MAX_TX_BUF      12
 
     
     extern char tx_active;
     extern char tx_space_available;
-    extern ringbuf_t tx_ringbuf;
+    extern ringbuf_t *tx_ringbuf;
     
     void transmitter_init(void);
     void ccp2_isr(void);

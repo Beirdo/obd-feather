@@ -6,12 +6,13 @@
  */
 
 #include <string.h>
+#include <xc.h>
 #include <proc/pic16f15225.h>
 
-#include <main.h>
-#include <receiver.h>
-#include <ringbuf.h>
-#include <i2c_slave.h>
+#include "main.h"
+#include "receiver.h"
+#include "ringbuf.h"
+#include "i2c_slave.h"
 
 char rx_count;
 unsigned char rx_buffer[MAX_RX_BUF];
@@ -29,7 +30,7 @@ char rx_buffers;
 unsigned short int rx_last_timer;
 unsigned short int rx_slop;
 
-char check_timing(unsigned short int duration, unsigned short int *timings, 
+char check_timing(unsigned short int duration, const unsigned short int *timings, 
         char index, unsigned short int fudge);
 
 void receiver_init(void) {
@@ -45,7 +46,7 @@ void receiver_init(void) {
     rx_last_level = 0;
     rx_protocol_error = 0;
     
-    rx_ringbuf = ringbuf_create(MAX_RINGBUF_SIZE, &rx_buffers);
+    rx_ringbuf = ringbuf_create(0, &rx_buffers);
    
     /* Capture CCP1 on both edges */
     CCP1CON = 0x00;     /* disable first */
@@ -59,7 +60,7 @@ void receiver_init(void) {
     INTCONbits.GIE = 1;
 }
 
-char check_timing(unsigned short int duration, unsigned short int *timings, 
+char check_timing(unsigned short int duration, const unsigned short int *timings, 
         char index, unsigned short int fudge) {
     unsigned short int timing = timings[index];
     if ((duration >= timing - fudge) && (duration <= timing + fudge)) {
@@ -73,7 +74,7 @@ void ccp1_isr(void) {
     unsigned short int now;
     char this_bit = 0;
     char sae_pwm = get_sae_pwm(!rx_timer_active);
-    unsigned short int *timings = &j1850_timings[sae_pwm];
+    const unsigned short int *timings = j1850_timings[sae_pwm];
     unsigned short int fudge = timings[INDEX_FUDGE];
     char sof = 0;
     char found = 0;

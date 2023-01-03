@@ -5,13 +5,14 @@
  * Created on January 2, 2023, 4:53 PM
  */
 
+#include <xc.h>
 #include <proc/pic16f15225.h>
 
-#include <i2c_slave.h>
-#include <interrupt.h>
-#include <ringbuf.h>
-#include <receiver.h>
-#include <transmitter.h>
+#include "i2c_slave.h"
+#include "interrupt.h"
+#include "ringbuf.h"
+#include "receiver.h"
+#include "transmitter.h"
 
 char i2c_error;
 char i2c_state;
@@ -143,7 +144,7 @@ void ssp1_isr(void) {
                 *reg = ch;
                 
                 if (i2c_tx_tail == MAX_TX_BUF) {
-                    ringbuf_write(tx_ringbuf, &i2c_tx_buf, MAX_TX_BUF);
+                    ringbuf_write(tx_ringbuf, i2c_tx_buf, MAX_TX_BUF);
                     i2c_tx_tail = 0;
                 }
             }
@@ -171,6 +172,6 @@ void i2c_rx_kick(void) {
         return;
     }
     
-    i2c_rx_count = ringbuf_read(rx_ringbuf, i2c_rx_buf, MAX_RX_BUF);
+    i2c_rx_count = (char)ringbuf_read(rx_ringbuf, i2c_rx_buf, MAX_RX_BUF);
     i2c_rx_head = 0;
 }
