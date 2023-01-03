@@ -86,7 +86,7 @@ void ssp1_isr(void) {
     switch (i2c_state) {
         case I2C_STATE_IDLE:
             ch = SSP1BUF;
-            if (ch & 0xFE != I2C_SLAVE_ADDRESS) {
+            if ((ch & 0xFE) != I2C_SLAVE_ADDRESS) {
                 return;
             }
             i2c_read = ch & 0x01;
@@ -104,7 +104,7 @@ void ssp1_isr(void) {
             if (i2c_reg_addr >= I2C_REG_COUNT) {
                 reg = &dummy;
             } else {
-                reg = &registers[i2c_reg_addr];
+                reg = (unsigned char *)registers[i2c_reg_addr];
             }
      
             if (i2c_read) {

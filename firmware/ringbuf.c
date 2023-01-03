@@ -15,7 +15,7 @@ ringbuf_t *ringbuf_create(char index, char *notify) {
         return NULL;
     }
     
-    ringbuf_t *rb = &ringbuffers[2];
+    ringbuf_t *rb = &ringbuffers[index];
     rb->head = 0;
     rb->tail = 0;    
     rb->notify = notify;
