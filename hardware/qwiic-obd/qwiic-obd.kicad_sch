@@ -2002,9 +2002,6 @@
     (path "/3ceb3a02-dea1-4fb7-a142-5bd34d2ae86a/e9d5ac78-2ded-4b3b-93fa-0837db9cd76f"
       (reference "#PWR0620") (unit 1) (value "GND") (footprint "")
     )
-    (path "/3ceb3a02-dea1-4fb7-a142-5bd34d2ae86a/7907f743-ed49-4c2b-9b99-e1aee8757d7d"
-      (reference "#PWR0621") (unit 1) (value "+3V3") (footprint "")
-    )
     (path "/3ceb3a02-dea1-4fb7-a142-5bd34d2ae86a/99d13dce-6ba0-48b3-a1ee-5e2913bb85d7"
       (reference "#PWR0622") (unit 1) (value "+3V3") (footprint "")
     )
@@ -2016,9 +2013,6 @@
     )
     (path "/3ceb3a02-dea1-4fb7-a142-5bd34d2ae86a/c382f18a-b5e9-4502-afcb-c3afd29483a5"
       (reference "#PWR0625") (unit 1) (value "GND") (footprint "")
-    )
-    (path "/3ceb3a02-dea1-4fb7-a142-5bd34d2ae86a/3e992f42-9653-4302-8c1f-22a75955df39"
-      (reference "#PWR0626") (unit 1) (value "+3V3") (footprint "")
     )
     (path "/3ceb3a02-dea1-4fb7-a142-5bd34d2ae86a/fb6d7224-1302-45c3-9351-9d5892de7593"
       (reference "#PWR0627") (unit 1) (value "GND") (footprint "")
@@ -2112,6 +2106,12 @@
     )
     (path "/26ad0dd7-dce4-4dc6-8f63-0bc779a2d22d/7df2c53c-0881-469e-8b8e-91df36ad7304"
       (reference "#PWR0809") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/2940c1f3-5f8f-4a77-b9a5-3db797a9d050/43111f10-3cd2-46a5-8e84-4220c61f03c6"
+      (reference "#PWR?") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/3ceb3a02-dea1-4fb7-a142-5bd34d2ae86a/a8ee6aa8-86a6-400e-ae17-fd66fc1e8b83"
+      (reference "#PWR?") (unit 1) (value "GND") (footprint "")
     )
     (path "/4088d135-b9c9-4a58-8332-a8bdb1a14533/43d07969-ba55-4354-a041-3848e81a9292"
       (reference "C301") (unit 1) (value "150pF") (footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
@@ -2267,7 +2267,10 @@
       (reference "J401") (unit 1) (value "1x4") (footprint "Connector_PinSocket_2.54mm:PinSocket_1x04_P2.54mm_Vertical")
     )
     (path "/3ceb3a02-dea1-4fb7-a142-5bd34d2ae86a/cff9d800-9495-47fe-bb8a-4680e8ab8d47"
-      (reference "J601") (unit 1) (value "PIC-ICSPPOLAR_LOCK") (footprint "SparkFun-Connectors:MOLEX-1X6")
+      (reference "J601") (unit 1) (value "PIC ICSP") (footprint "SparkFun-Connectors:MOLEX-1X6")
+    )
+    (path "/3ceb3a02-dea1-4fb7-a142-5bd34d2ae86a/888e3439-f6a7-4af3-927f-cb56a67f6ed3"
+      (reference "J?") (unit 1) (value "PIC UART") (footprint "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical")
     )
     (path "/12ed1cd2-cd48-42ad-92e9-45dc067dc7b4/6f94044d-9585-4a84-9e26-b7c9d6e2eb2d"
       (reference "L501") (unit 1) (value "3.9uH > 3A") (footprint "Inductor_SMD:L_0603_1608Metric_Pad1.05x0.95mm_HandSolder")
@@ -2506,6 +2509,9 @@
     (path "/26ad0dd7-dce4-4dc6-8f63-0bc779a2d22d/5bd2b4ee-a8cc-46eb-9c7b-e344d8ff6545"
       (reference "R801") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
     )
+    (path "/2940c1f3-5f8f-4a77-b9a5-3db797a9d050/d149226e-3aba-414d-97a9-7562ae666b71"
+      (reference "R?") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
+    )
     (path "/2940c1f3-5f8f-4a77-b9a5-3db797a9d050/5e4ca711-6598-41f7-9ec8-99267c1e7de0"
       (reference "RN401") (unit 1) (value "10k") (footprint "UltraLibrarian:742C163103JP")
     )
@@ -2517,6 +2523,9 @@
     )
     (path "/2940c1f3-5f8f-4a77-b9a5-3db797a9d050/17e9f32d-27af-4c79-96e4-5ded18725aa4"
       (reference "SW401") (unit 1) (value "SW_Push") (footprint "Button_Switch_THT:SW_PUSH_6mm")
+    )
+    (path "/2940c1f3-5f8f-4a77-b9a5-3db797a9d050/f9afb0b9-f827-4d48-8d79-237005247abc"
+      (reference "SW?") (unit 1) (value "SW_Push") (footprint "Button_Switch_THT:SW_PUSH_6mm")
     )
     (path "/0ef7f886-9405-4e9f-8fef-2906503ece66/c9c621f3-cd29-4dca-8beb-8ae69e9f093d"
       (reference "U201") (unit 1) (value "TS5A3359DCUR") (footprint "UltraLibrarian:TS5A3359DCUR")

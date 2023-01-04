@@ -2,4 +2,5 @@
   (lib (name "SparkFun-Connectors")(type "KiCad")(uri "${KIPRJMOD}/library/Sparkfun/SparkFun-Connectors.pretty")(options "")(descr ""))
   (lib (name "SparkFun-DiscreteSemi")(type "KiCad")(uri "${KIPRJMOD}/library/Sparkfun/SparkFun-DiscreteSemi.pretty")(options "")(descr ""))
   (lib (name "UltraLibrarian")(type "KiCad")(uri "${KIPRJMOD}/library/UltraLibrarian/footprints.pretty")(options "")(descr ""))
+  (lib (name "local")(type "KiCad")(uri "${KIPRJMOD}/library/local")(options "")(descr ""))
 )
