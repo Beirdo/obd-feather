@@ -1,2 +1,2 @@
-/firmware/build/
-/firmware/dist/
+/firmware/*/build/
+/firmware/*/dist/
