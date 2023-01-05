@@ -99,14 +99,17 @@ void BL_Initialize(void)
 {
     resetPending = false;
 
+    BL_INDICATOR_OFF();
 
     if (BL_BootloadRequired() == true)
     {
 
+        BL_INDICATOR_ON();
         BL_RunBootloader(); // generic comms layer
     }
     STKPTR = 0x1FU;
     BSR = 0U;
+    BL_INDICATOR_OFF();
     asm("pagesel " str(NEW_RESET_VECTOR));
     asm("goto  " str(NEW_RESET_VECTOR));
 }
@@ -229,6 +232,7 @@ static void BL_CheckDeviceReset(void)
     if (resetPending == true)
     {
 
+        BL_INDICATOR_OFF();
         RESET();
     }
 }

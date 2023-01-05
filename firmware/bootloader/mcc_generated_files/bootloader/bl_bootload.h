@@ -92,6 +92,18 @@
 
 /**
  * @ingroup generic_bootloader_8bit
+ * @def BL_INDICATOR_ON
+ * This is a macro to turn ON the bootloader indicator.
+ */
+#define BL_INDICATOR_ON               BL_INDICATOR_SetLow
+/**
+ * @ingroup generic_bootloader_8bit
+ * @def BL_INDICATOR_OFF
+ * This is a macro to turn OFF the bootloader indicator.
+ */
+#define BL_INDICATOR_OFF              BL_INDICATOR_SetHigh 
+/**
+ * @ingroup generic_bootloader_8bit
  * @def BL_HEADER
  * This is a macro to hold offset of bootloader header.
  */

@@ -2248,6 +2248,9 @@
     (path "/3ceb3a02-dea1-4fb7-a142-5bd34d2ae86a/6feee098-707f-44c9-86a2-c93908f12961"
       (reference "D605") (unit 1) (value "BAT54AW") (footprint "Package_TO_SOT_SMD:SOT-323_SC-70")
     )
+    (path "/3ceb3a02-dea1-4fb7-a142-5bd34d2ae86a/0d3e0d13-c487-4580-9ecc-1a5885b01710"
+      (reference "D606") (unit 1) (value "LED") (footprint "LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder")
+    )
     (path "/ac2cfe8d-5f01-4945-bda9-e6c47cca6b34/d7e6f421-0f72-4e9a-818f-0744ed6e5a45"
       (reference "D701") (unit 1) (value "BAT54W") (footprint "Diode_SMD:D_SOD-123")
     )
@@ -2271,6 +2274,9 @@
     )
     (path "/3ceb3a02-dea1-4fb7-a142-5bd34d2ae86a/888e3439-f6a7-4af3-927f-cb56a67f6ed3"
       (reference "J602") (unit 1) (value "PIC UART") (footprint "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical")
+    )
+    (path "/3ceb3a02-dea1-4fb7-a142-5bd34d2ae86a/033ecaa0-8d98-499e-be9c-1b7e936706c8"
+      (reference "JP601") (unit 1) (value "BL_LED = 1,2  ICSP_DAT = 2,3") (footprint "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical")
     )
     (path "/12ed1cd2-cd48-42ad-92e9-45dc067dc7b4/6f94044d-9585-4a84-9e26-b7c9d6e2eb2d"
       (reference "L501") (unit 1) (value "3.9uH > 3A") (footprint "Inductor_SMD:L_0603_1608Metric_Pad1.05x0.95mm_HandSolder")
@@ -2478,6 +2484,9 @@
     )
     (path "/3ceb3a02-dea1-4fb7-a142-5bd34d2ae86a/403a3844-a00a-43a1-b3ad-9a8616c76ad1"
       (reference "R620") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
+    )
+    (path "/3ceb3a02-dea1-4fb7-a142-5bd34d2ae86a/6bcdce8a-f465-4baf-aca1-d6f01c5833c2"
+      (reference "R621") (unit 1) (value "330") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
     )
     (path "/ac2cfe8d-5f01-4945-bda9-e6c47cca6b34/ff9bf02e-179a-44c2-9b6d-5a6badcfec9b"
       (reference "R701") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")

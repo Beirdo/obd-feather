@@ -49,6 +49,26 @@
 #define PULL_UP_ENABLED      1
 #define PULL_UP_DISABLED     0
 
+// get/set IO_RA0 aliases
+#define BL_INDICATOR_TRIS                 TRISAbits.TRISA0
+#define BL_INDICATOR_LAT                  LATAbits.LATA0
+#define BL_INDICATOR_PORT                 PORTAbits.RA0
+#define BL_INDICATOR_WPU                  WPUAbits.WPUA0
+#define BL_INDICATOR_OD                   ODCONAbits.ODCA0
+#define BL_INDICATOR_ANS                  ANSELAbits.ANSA0
+#define BL_INDICATOR_SetHigh()            do { LATAbits.LATA0 = 1; } while(0)
+#define BL_INDICATOR_SetLow()             do { LATAbits.LATA0 = 0; } while(0)
+#define BL_INDICATOR_Toggle()             do { LATAbits.LATA0 = ~LATAbits.LATA0; } while(0)
+#define BL_INDICATOR_GetValue()           PORTAbits.RA0
+#define BL_INDICATOR_SetDigitalInput()    do { TRISAbits.TRISA0 = 1; } while(0)
+#define BL_INDICATOR_SetDigitalOutput()   do { TRISAbits.TRISA0 = 0; } while(0)
+#define BL_INDICATOR_SetPullup()          do { WPUAbits.WPUA0 = 1; } while(0)
+#define BL_INDICATOR_ResetPullup()        do { WPUAbits.WPUA0 = 0; } while(0)
+#define BL_INDICATOR_SetPushPull()        do { ODCONAbits.ODCA0 = 0; } while(0)
+#define BL_INDICATOR_SetOpenDrain()       do { ODCONAbits.ODCA0 = 1; } while(0)
+#define BL_INDICATOR_SetAnalogMode()      do { ANSELAbits.ANSA0 = 1; } while(0)
+#define BL_INDICATOR_SetDigitalMode()     do { ANSELAbits.ANSA0 = 0; } while(0)
+
 // get/set IO_RA2 aliases
 #define IO_RA2_TRIS                 TRISAbits.TRISA2
 #define IO_RA2_LAT                  LATAbits.LATA2
