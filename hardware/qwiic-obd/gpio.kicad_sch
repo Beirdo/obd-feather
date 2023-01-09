@@ -3106,7 +3106,7 @@
     (property "Reference" "U404" (id 0) (at 224.79 116.84 0)
       (effects (font (size 1.524 1.524)) (justify left))
     )
-    (property "Value" "ADM6320BX33ARJZ-R7" (id 1) (at 213.36 119.38 0)
+    (property "Value" "APX823-31W5G-7" (id 1) (at 213.36 119.38 0)
       (effects (font (size 1.524 1.524)) (justify left))
     )
     (property "Footprint" "UltraLibrarian:ADM6320BX33ARJZ-R7" (id 2) (at 226.06 120.904 0)
