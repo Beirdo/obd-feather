@@ -33,7 +33,7 @@ enum {
 }
 
 struct mcp342x_config {
-	struct 12c_dt_spec bus;
+	struct i2c_dt_spec bus;
 	uint8_t channels;
 };
 
