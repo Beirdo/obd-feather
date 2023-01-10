@@ -45,6 +45,7 @@ struct mcp342x_data {
 	uint8_t channels;
 	uint8_t differential;
 	uint8_t configval;
+	uint32_t ready_time;
 	struct k_thread thread;
 	struct k_sem sem;
 
@@ -124,6 +125,22 @@ static int mcp342x_get_sample_rate_bits(uint8_t resolution) {
 	}
 }
 
+static uint32_t mcp342x_get_timer_delay_us(uint8_t resolution) {
+	switch(resolution) {
+		case 12:
+			return (1000000 / 240);
+		case 14:
+			return (1000000 / 60);
+		case 16:
+			return (1000000 / 15);
+		case 18:
+			return (100000000 / 375);
+		default:
+			return -1;
+	}
+}
+
+
 static int mcp342x_get_gain_bits(uint8_t gain) {
 	switch(resolution) {
 		case ADC_GAIN_1:
@@ -137,6 +154,32 @@ static int mcp342x_get_gain_bits(uint8_t gain) {
 		default:
 			return -1;
 	}
+}
+
+static int mcp342x_wait_data_ready(const struct device *dev)
+{
+	int rc = 0;
+	struct mcp342x_data *data = dev->data;
+
+	k_sleep(data->ready_time);
+
+#if 0
+	uint16_t status = 0;
+
+	rc = mcp342x_read_reg(dev, ADS1X1X_REG_CONFIG, &status);
+	if (rc != 0) {
+		return rc;
+	}
+
+	while (!(status & ADS1X1X_CONFIG_OS)) {
+		k_sleep(K_USEC(100));
+		rc = ads1x1x_read_reg(dev, ADS1X1X_REG_CONFIG, &status);
+		if (rc != 0) {
+			return rc;
+		}
+	}
+#endif
+	return rc;
 }
 
 static int mcp342x_channel_setup(const struct device *dev,
@@ -185,6 +228,10 @@ static int mcp342x_channel_setup(const struct device *dev,
 	configval |= gain_bits & 0x03;
 
 	data->configval = configval;
+
+	uint32_t us_delay = mcp342x_get_timer_delay_us(channel_cfg->resolution);
+	us_delay += 25;
+	data->ready_time = K_USEC(us_delay);
 
 	return mcp342x_write_config(dev, configval);;
 }
@@ -315,6 +362,13 @@ static void mcp342x_acquisition_thread(struct mcp342x_data *data)
 
 	while (true) {
 		k_sem_take(&data->sem, K_FOREVER);
+
+		err = mcp342x_wait_data_ready(dev);
+		if (err) {
+			LOG_ERR("failed to get ready status (err %d)", err);
+			adc_context_complete(&data->ctx, err);
+			break;
+		}
 
 		while (data->channels) {
 			channel = find_lsb_set(data->channels) - 1;

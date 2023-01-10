@@ -3,14 +3,14 @@
 	spi_bridge_shield: spi_bridge@0x50 {
 		compatible = "nxp,sc18is602b";
 		status = "okay";
-		spi-max-frequency = <20000000>;
+		spi-max-frequency = <1843000>;
 		reg = <0x50>;
 
 		can0_shield: can@0 {
 			compatible = "microchip,mcp2515";
 			status = "okay";
-			spi-max-frequency = <20000000>;
-			reg = <0;1
+			spi-max-frequency = <10000000>;
+			reg = <0>;
 		};
 	};
 
