@@ -1,0 +1,52 @@
+&qwiic_i2c0 {
+	# 0x28
+	spi_bridge_shield: spi_bridge@0x50 {
+		compatible = "nxp,sc18is602b";
+		status = "okay";
+		spi-max-frequency = <20000000>;
+		reg = <0x50>;
+
+		can0_shield: can@0 {
+			compatible = "microchip,mcp2515";
+			status = "okay";
+			spi-max-frequency = <20000000>;
+			reg = <0;1
+		};
+	};
+
+	# 0x20
+	gpio0_shield: gpio@0x40 {
+		compatible = "ti,tca9538";
+		status = "okay";
+		reg = <0x40>;
+	};
+
+	# 0x21
+	gpio1_shield: gpio@0x42 {
+		compatible = "ti,tca9538";
+		status = "okay";
+		reg = <0x42>;
+	};
+
+	# 0x68
+	adc_shield: adc@0xD0 {
+		compatible = "microchip,mcp3423";
+		status = "okay";
+		reg = <0xD0>;
+	};
+
+	# 0x79
+	can1_shield: j1850@0xF2 {
+		compatible = "beirdo,j1850process";
+		status = "okay";
+		reg = <0xF2>;
+	};
+
+	# 0x4D
+	uart0_shield: uart@0x9A {
+		compatible = "nxp,sc16is741a";
+		status = "okay";
+		current-speed = <10400>;
+		reg = <0xF2>;
+	};
+};
