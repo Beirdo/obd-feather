@@ -6,10 +6,10 @@
 config SHIELD_BEIRDO_QWIIC_OBD_V1
 	bool "Beirdo's QWIIC OBD v1"
 	def-bool $(shields_list_contains,beirdo_qwiic_obd_v1)
-	depends on ADC_MCP3423
+	depends on ADC_MCP342X
 	depends on CAN_J1850_PROCESS
 	depends on I2C
 	depends on SPI_SC18IS602B
-	depends on GPIO_TCA953x
+	depends on GPIO_TCA953X
 	depends on SERIAL_C16IS741A
 	depends on CAN_MCP2515
