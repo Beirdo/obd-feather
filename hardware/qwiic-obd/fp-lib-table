@@ -1,6 +1,6 @@
 (fp_lib_table
-  (lib (name "SparkFun-Connectors")(type "KiCad")(uri "${KIPRJMOD}/library/Sparkfun/SparkFun-Connectors.pretty")(options "")(descr ""))
-  (lib (name "SparkFun-DiscreteSemi")(type "KiCad")(uri "${KIPRJMOD}/library/Sparkfun/SparkFun-DiscreteSemi.pretty")(options "")(descr ""))
-  (lib (name "UltraLibrarian")(type "KiCad")(uri "${KIPRJMOD}/library/UltraLibrarian/footprints.pretty")(options "")(descr ""))
-  (lib (name "local")(type "KiCad")(uri "${KIPRJMOD}/library/local")(options "")(descr ""))
+  (lib (name "SparkFun-Connectors")(type "KiCad")(uri "${KICAD6_GIT_LIBRARIES}/SparkFun-KiCad-Libraries/Footprints/Connectors.pretty")(options "")(descr ""))
+  (lib (name "SparkFun-Silicon-Standard")(type "KiCad")(uri "${KICAD6_GIT_LIBRARIES}/SparkFun-KiCad-Libraries/Footprints/Silicon-Standard.pretty")(options "")(descr ""))
+  (lib (name "UltraLibrarian")(type "KiCad")(uri "${KICAD6_GIT_LIBRARIES}/Beirdo-KiCad-Libraries/Footprints/UltraLibrarian.pretty")(options "")(descr ""))
+  (lib (name "Beirdo")(type "KiCad")(uri "${KICAD6_GIT_LIBRARIES}/Beirdo-KiCad-Libraries/Footprints/Beirdo.pretty")(options "")(descr ""))
 )
