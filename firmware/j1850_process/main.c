@@ -33,12 +33,14 @@ const unsigned short int j1850_timings[TYPE_COUNT][INDEX_COUNT] = {
         TIMING_PWM_FUDGE
     },
     {
-        TIMING_VPW_SOF,
-        TIMING_VPW_INACT_0,
-        TIMING_VPW_INACT_1,
-        TIMING_VPW_ACT_0,
-        TIMING_VPW_ACT_1,
-        TIMING_VPW_FUDGE
+        {400, 364, 436, 326, 478},
+        {560, 522, -1, 478, -1},
+        {600, 560, 10000, 476, 32768},
+        {600, 560, -1, 560, -1},
+        {128, 98, 158, 68, 192},
+        {256, 224, 290, 192, 326},
+        {256, 224, 290, 192, 326},
+        {128, 98, 158, 68, 192},
     }
 };
 
