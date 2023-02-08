@@ -7,3 +7,4 @@ Chose board:
 
 Libraries:
    CircularBuffer by AgileWare - v1.3.3
+   Queue by SMFSW <xgarmanbozlax@gmail.com> - v1.11.0
