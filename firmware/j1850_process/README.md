@@ -6,5 +6,4 @@ Chose board:
    ATtiny3224/1624/1614/1604/824/814/804/424/414/404/214/204
 
 Libraries:
-   Queue by SMFSW <xgarmanboziax@gmail.com>
-   CircularBuffer by AgileWare - v 1.3.3
+   CircularBuffer by AgileWare - v1.3.3
