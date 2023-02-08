@@ -2,4 +2,5 @@
   (lib (name "SparkFun-Connectors")(type "KiCad")(uri "${KICAD6_GIT_LIBRARIES}/SparkFun-KiCad-Libraries/Libraries/SparkFun-Connectors.kicad_sym")(options "")(descr ""))
   (lib (name "SparkFun-DiscreteSemi")(type "KiCad")(uri "${KICAD6_GIT_LIBRARIES}/SparkFun-KiCad-Libraries/Libraries/SparkFun-DiscreteSemi.kicad_sym")(options "")(descr ""))
   (lib (name "UltraLibrarian")(type "KiCad")(uri "${KICAD6_GIT_LIBRARIES}/Beirdo-KiCad-Libraries/Symbols/UltraLibrarian.kicad_sym")(options "")(descr ""))
+  (lib (name "Beirdo")(type "KiCad")(uri "/home/gjhurlbu/projs/qwiic-obd/hardware/git-libraries/Beirdo-KiCad-Libraries/Symbols/Beirdo.kicad_sym")(options "")(descr ""))
 )
