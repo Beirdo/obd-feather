@@ -113,8 +113,10 @@ void loop() {
   int delayUs = j1850io.process();
 
   int elapsed = micros() - topOfLoop;
-  delayUs = clamp<int>(delayUs - elapsed, 1, 100);
-  delayMicroseconds(delayUs);
+  delayUs = clamp<int>(delayUs - elapsed, 0, 100);
+  if (delayUs) {
+    delayMicroseconds(delayUs);
+  }
 }
 
 
