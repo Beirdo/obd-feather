@@ -4,6 +4,7 @@
 #include <CircularBuffer.h>
 
 #include "project.h"
+#include "j1850_io.h"
 
 enum {
   I2C_REG_INT_ENABLES,
@@ -14,7 +15,7 @@ enum {
 
 enum {
   IRQ_RX_PROTOCOL_ERROR,
-  IRQ_RX_BUFFERS_AVAILABLE,
+  IRQ_RX_PACKETS_AVAILABLE,
   IRQ_TX_OVERFLOW,
   IRQ_TX_ACTIVE,
   IRQ_TX_SPACE_AVAILABLE,  
@@ -24,7 +25,11 @@ uint8_t reg_address;
 volatile uint8_t registerBank[I2C_REG_COUNT];
 
 CircularBuffer<uint8_t, 128> rxRingBuf;
+int rxPacketCount = 0;
+
 CircularBuffer<uint8_t, 128> txRingBuf;
+
+J1850IO j1850io(PIN_J1850_RX, PIN_J1850_TX);
 
 void setOpenDrainOutput(uint8_t pin, bool value, bool invert = false);
 void i2c_request_event(void);
@@ -59,8 +64,8 @@ void setOutboundInterrupt(void)
   uint8_t flags = registerBank[I2C_REG_INT_FLAGS];
   uint8_t mask  = registerBank[I2C_REG_INT_ENABLES];
 
-  flags |= (rxRingBuf.isEmpty() ? 0 : BIT(IRQ_RX_BUFFERS_AVAILABLE));
-  flags |= (txRingBuf.isFull() ? 0 : BIT(IRQ_TX_SPACE_AVAILABLE));
+  flags |= (rxPacketCount ? BIT(IRQ_RX_PACKETS_AVAILABLE) : 0);
+  flags |= (txRingBuf.available() / MAX_PACKET_SIZE ? BIT(IRQ_TX_SPACE_AVAILABLE) : 0);
 
   registerBank[I2C_REG_INT_FLAGS] = flags;
   flags &= mask;
@@ -95,20 +100,22 @@ void setup() {
 
   Wire.begin(I2C_SLAVE_ADDR);
   Serial.begin(115200);
+
+  j1850io.init();
 }
 
 void loop() {
   static uint16_t ledCounter = 0;
-  int topOfLoop = millis();
+  int topOfLoop = micros();
 
   bool ledOn = ((ledCounter++ & 0x07) == 0x01);
   digitalWrite(PIN_AVR_LED, !ledOn);
 
+  int delayUs = j1850io.process();
 
-
-  int elapsed = millis() - topOfLoop;
-  int delayMs = clamp<int>(100 - elapsed, 1, 100);
-  delay(delayMs);
+  int elapsed = micros() - topOfLoop;
+  delayUs = clamp<int>(delayUs - elapsed, 1, 100);
+  delayMicroseconds(delayUs);
 }
 
 
@@ -166,6 +173,7 @@ void i2c_request_event(void)
     registerBank[I2C_REG_INT_FLAGS] |= BIT(IRQ_RX_PROTOCOL_ERROR);
   }
   Wire.write(buf, len);
+  rxPacketCount = clamp<int>(rxPacketCount - 1, 0, rxRingBuf.capacity / MAX_PACKET_SIZE);
   setOutboundInterrupt();
 }
 

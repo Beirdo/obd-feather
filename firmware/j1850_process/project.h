@@ -2,6 +2,7 @@
 #define __project_h_
 
 #include <Arduino.h>
+#include <CircularBuffer.h>
 
 #define PIN_UPDI	      PIN_PA0
 #define PIN_J1850_TX    PIN_PA1
@@ -29,6 +30,11 @@
 #define LO_NIBBLE(x)  ((uint8_t)(((int)(x) & 0x0F)))
 
 #define BIT(x)        (1 << (x))
+
+
+extern CircularBuffer<uint8_t, 128> rxRingBuf;
+extern CircularBuffer<uint8_t, 128> txRingBuf;
+
 
 template <typename T>
 inline T clamp(T value, T minval, T maxval)
