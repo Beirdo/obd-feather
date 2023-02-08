@@ -29,8 +29,6 @@ int rxPacketCount = 0;
 
 CircularBuffer<uint8_t, 128> txRingBuf;
 
-J1850IO j1850io(PIN_J1850_RX, PIN_J1850_TX);
-
 void setOpenDrainOutput(uint8_t pin, bool value, bool invert = false);
 void i2c_request_event(void);
 void i2c_receive_event(int count);
@@ -88,6 +86,7 @@ void setup() {
   digitalWrite(PIN_J1850_TX, LOW);
 
   pinMode(PIN_J1850_RX, INPUT);
+  attachInterrupt(digitalPinToInterrupt(PIN_J1850_RX), j1850_rx_isr, CHANGE);
 
   pinMode(PIN_J1850_INT, OUTPUT);
   digitalWrite(PIN_J1850_INT, HIGH);

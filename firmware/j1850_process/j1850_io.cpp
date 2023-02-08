@@ -1,7 +1,15 @@
 #include <Arduino.h>
+#include <cppQueue.h>
+#include <assert.h>
+#include <avr/io.h>
 
 #include "project.h"
 #include "j1850_io.h"
+
+typedef struct {
+  uint32_t duration_us;
+  bool value;
+} rx_timing_t;
 
 static const timing_t vpw_timing[INDEX_COUNT] = {
   {-1, -1, -1, -1, -1},         // SOF_0
@@ -31,12 +39,18 @@ static const timing_t pwm_timing[INDEX_COUNT] = {
   {8, 6, 8, 4, 10},         // ACT_1
 };
 
+uint32_t last_edge_us;
+cppQueue rx_timing_q(sizeof(rx_timing_t), 16, FIFO);
+
+J1850IO j1850io(PIN_J1850_RX, PIN_J1850_TX);
+
 void J1850IO::init(void) 
 {
   // Not sure if anything needs to be done here, but let's set the mode for now
   setMode(digitalRead(PIN_SAE_PWM ? TYPE_PWM : TYPE_VPW));
 
   // bus is idle, so we are listening.
+  last_edge_us = 0;
   _transmitting = false;
   digitalWrite(PIN_J1850_TX, LOW); 
 }
@@ -171,6 +185,46 @@ int J1850IO::processTX(void)
 
 int J1850IO::processRX(void)
 {
-  // TODO: implement RX.  Need sleep.
-  return -1;
+  int delayUs = -1;
+  rx_timing_t timing;
+
+  while (!rx_timing_q.isEmpty()) {
+    rx_timing_q.pop(&timing);
+
+    if (_mode == TYPE_PWM) {
+      delayUs = processPWM(timing.duration_us, timing.value);
+    } else {
+      delayUs = processVPW(timing.duration_us, timing.value);
+    }
+    _last_level = timing.value;
+  }
+  
+  return delayUs;
+}
+
+int J1850IO::processPWM(uint32_t duration, bool level)
+{
+
+}
+
+int J1850IO::processVPW(uint32_t duration, bool level)
+{
+  
+}
+
+static_assert(PIN_J1850_RX == PIN_PA2, "Need to adjust hardcoded RX pin logic");
+
+void j1850_rx_isr(void)
+{
+  // We saw an edge
+  if (j1850io.isTransmitting()) {
+    // will need to add some collsion detection here
+    return;
+  }
+
+  // Hardcoded to read the pin at PA2
+  uint32_t now = micros();
+  uint32_t duration = now - last_edge_us;
+  rx_timing_t timing = {duration, !(PORTA_IN & BIT(2))};
+  rx_timing_q.push(&timing);
 }

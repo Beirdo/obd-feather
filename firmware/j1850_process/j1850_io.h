@@ -31,6 +31,8 @@ enum {
 };
 
 
+void j1850_rx_isr(void);
+
 class J1850IO {
   public:
     J1850IO(uint8_t rx_pin, uint8_t tx_pin, uint16_t noise_us = 1) : 
@@ -39,6 +41,7 @@ class J1850IO {
     void init(void);
     int process(void);
     void kickTX(void);
+    bool isTransmitting(void) { return _transmitting; };
 
   protected:
     uint8_t _rx_pin;
@@ -54,7 +57,11 @@ class J1850IO {
     int processTX(void);
     int processRX(void);
     uint8_t get_next_tx_index(bool new_packet = false);
+    int processPWM(uint32_t duration, bool level);
+    int processVPW(uint32_t duration, bool level);
 
 };
+
+extern J1850IO j1850io;
 
 #endif
