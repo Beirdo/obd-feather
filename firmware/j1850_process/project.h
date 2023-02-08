@@ -22,6 +22,7 @@
 #define MAX_PACKET_SIZE 12          // defined in the SAE J1850 spec
 #define CH_SOF          ((uint8_t)0x7E)
 #define CH_ESC          ((uint8_t)0x7D)
+#define CH_ABORT        ((uint8_t)(CH_SOF ^ 0x80))
 
 #define HI_BYTE(x)     ((uint8_t)(((int)(x) >> 8) & 0xFF))
 #define LO_BYTE(x)     ((uint8_t)(((int)(x) & 0xFF)))
@@ -34,6 +35,9 @@
 
 extern CircularBuffer<uint8_t, 128> rxRingBuf;
 extern CircularBuffer<uint8_t, 128> txRingBuf;
+extern int rxPacketCount;
+
+void setOutboundInterrupt(void);
 
 
 template <typename T>

@@ -21,6 +21,7 @@ enum {
   INDEX_INACT_1,
   INDEX_ACT_0,
   INDEX_ACT_1,
+  INDEX_ABORT,
   INDEX_COUNT,
 };
 
@@ -42,6 +43,7 @@ class J1850IO {
     int process(void);
     void kickTX(void);
     bool isTransmitting(void) { return _transmitting; };
+    bool isIdle(void) { return !_transmitting && !_receiving; };
 
   protected:
     uint8_t _rx_pin;
@@ -49,10 +51,14 @@ class J1850IO {
     uint8_t _mode;
     uint16_t _noise_us;
     bool _transmitting;
+    bool _receiving;
     uint8_t _index;
     bool  _last_level;
-    uint8_t _shift_reg;
-    uint8_t _bit_count;
+    uint32_t _last_activity;
+    uint8_t _tx_shift_reg;
+    uint8_t _tx_bit_count;
+    uint8_t _rx_shift_reg;
+    uint8_t _rx_bit_count;
 
     int processTX(void);
     int processRX(void);

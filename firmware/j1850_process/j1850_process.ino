@@ -154,7 +154,7 @@ void i2c_request_event(void)
     if (in_escape) {
       ch = ch ^ 0x80;
       if (ch & 0x80) {
-        // this is buggered.  never mind!
+        // this is buggered.  never mind!  Abort!
         break;        
       }
       in_escape = false;
