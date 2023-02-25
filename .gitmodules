@@ -1,6 +1,0 @@
-[submodule "hardware/git-libraries/Beirdo-KiCad-Libraries"]
-	path = hardware/git-libraries/Beirdo-KiCad-Libraries
-	url = https://github.com/Beirdo/KiCad-Libraries.git
-[submodule "hardware/git-libraries/SparkFun-KiCad-Libraries"]
-	path = hardware/git-libraries/SparkFun-KiCad-Libraries
-	url = https://github.com/Beirdo/SparkFun-KiCad-Libraries

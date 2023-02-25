@@ -1219,7 +1219,7 @@
     (property "Reference" "R5" (id 0) (at 163.83 105.4099 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "1k" (id 1) (at 163.83 107.9499 0)
+    (property "Value" "10k" (id 1) (at 163.83 107.9499 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" (id 2) (at 159.512 106.68 90)
