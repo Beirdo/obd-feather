@@ -1,0 +1,15 @@
+# Copyright (c) 2023 Gavin Hurlbut
+# SPDX-License-Identifier: Apache-2.0
+
+description: NXP SC18IS602B I2C-SPI bridge
+
+compatible: "nxp,sc18is602b"
+
+include: [i2c-device.yaml, spi-controller.yaml]
+
+properties:
+    reg:
+      required: true
+
+    interrupts:
+      required: true

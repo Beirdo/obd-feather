@@ -1,6 +1,6 @@
 # MCP320x ADC configuration options
 
-# Copyright (c) 2020 Vestas Wind Systems A/S
+# Copyright (c) 2023 Gavin Hurlbut
 # SPDX-License-Identifier: Apache-2.0
 
 config ADC_MCP322X

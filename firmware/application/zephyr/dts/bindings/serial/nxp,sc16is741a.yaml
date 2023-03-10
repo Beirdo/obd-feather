@@ -1,0 +1,9 @@
+description: NXP SC16IS741A I2C UART
+
+compatible: "nxp,sc16is741a"
+
+include: [i2c-device.yaml, uart-controller.yaml]
+
+properties:
+    reg:
+      required: true
