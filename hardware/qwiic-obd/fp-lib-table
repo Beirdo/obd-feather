@@ -1,6 +1,0 @@
-(fp_lib_table
-  (lib (name "SparkFun-Connectors")(type "KiCad")(uri "${KICAD6_GIT_LIBRARIES}/SparkFun-KiCad-Libraries/Footprints/Connectors.pretty")(options "")(descr ""))
-  (lib (name "SparkFun-Silicon-Standard")(type "KiCad")(uri "${KICAD6_GIT_LIBRARIES}/SparkFun-KiCad-Libraries/Footprints/Silicon-Standard.pretty")(options "")(descr ""))
-  (lib (name "UltraLibrarian")(type "KiCad")(uri "${KICAD6_GIT_LIBRARIES}/Beirdo-KiCad-Libraries/Footprints/UltraLibrarian.pretty")(options "")(descr ""))
-  (lib (name "Beirdo")(type "KiCad")(uri "${KICAD6_GIT_LIBRARIES}/Beirdo-KiCad-Libraries/Footprints/Beirdo.pretty")(options "")(descr ""))
-)

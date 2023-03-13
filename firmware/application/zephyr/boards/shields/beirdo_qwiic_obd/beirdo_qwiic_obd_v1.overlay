@@ -1,6 +1,7 @@
 #include <dt-bindings/adc/adc.h>
+#include "feather_connector.dtsi"
 
-&i2c1 {
+&feather_i2c {
 	/* 0x28 */
 	spi_bridge_shield: spi_bridge@50 {
 		compatible = "nxp,sc18is602b";
@@ -9,6 +10,7 @@
 		reg = <0x50>;
 		#address-cells = <1>;
 		#size-cells = <0>;
+		irq-gpios = <&feather_header 14 GPIO_ACTIVE_LOW>;	/* SPI_INT -> D5 */
 
 		can0_shield: can@0 {
 			compatible = "microchip,mcp2515";
@@ -17,6 +19,7 @@
 			osc-freq = <12000000>;
 			bus-speed = <1000000>;
 			reg = <0>;
+			irq-gpios = <&feather_header 15 GPIO_ACTIVE_LOW>;  /* CAN_INT -> D6 */
 		};
 	};
 
@@ -68,6 +71,7 @@
 		compatible = "beirdo,j1850process";
 		status = "okay";
 		reg = <0xF2>;
+		irq-gpios = <&feather_header 16 GPIO_ACTIVE_LOW>;	/* J1850_INT -> D9 */
 	};
 
 	/* 0x4D */
@@ -76,5 +80,6 @@
 		status = "okay";
 		current-speed = <10400>;
 		reg = <0xF2>;
+		irq-gpios = <&feather_header 17 GPIO_ACTIVE_LOW>;	/* UART_INT -> D10 */
 	};
 };
