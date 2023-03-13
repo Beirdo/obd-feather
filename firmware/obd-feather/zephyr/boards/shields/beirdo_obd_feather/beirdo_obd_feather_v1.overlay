@@ -7,9 +7,13 @@
 &feather_i2c {
 	/* 0x20 */
 	external_gpio: gpio@40 {
-		compatible = "ti,tca9534";
-		status = "okay";
 		reg = <0x40>;
+		compatible = "ti,tca9538";
+		label = "external-gpio";
+		gpio-controller;
+		#gpio-cells = <2>;
+		ngpios = <8>;
+		status = "okay";
 	};
 };
 

@@ -6,8 +6,8 @@
 config SHIELD_BEIRDO_OBD_FEATHER_V1
 	bool "Beirdo's OBDII Feather v1"
 	def_bool $(shields_list_contains,beirdo_obd_feather_v1)
-  depends on CAN
-  depends on ADC
+    depends on CAN
+    depends on ADC
 	depends on I2C
-	depends on GPIO_TCA953X
-	depends on SPI
+	depends on GPIO_PCA953X
+	
