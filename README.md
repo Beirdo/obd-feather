@@ -1,2 +1,2 @@
-# qwiic-obd
-OBDII interface board that uses QWIIC to connect upstream.
+# obd-feather
+OBDII interface board with an attached Adafruit STM32F405 Feather Express.
