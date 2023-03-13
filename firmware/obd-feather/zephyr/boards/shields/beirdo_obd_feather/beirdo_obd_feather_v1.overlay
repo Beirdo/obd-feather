@@ -15,11 +15,30 @@
 		ngpios = <8>;
 		status = "okay";
 	};
+
+	display: ssd1306@3C {
+		reg = <0x3C>;
+		compatible = "solomon,ssd1306fb";
+		label = "SSD1306";
+		height = <128>;
+		width = <64>;
+		display-offset = <0>;
+		segment-offset = <0>;
+		page-offset = <0>;
+		multiplex-ratio = <63>;
+		segment-remap;
+		com-invdir;
+		prechargep = <0x22>;
+	};
 };
 
 
 &can1 {
 	pinctrl-0 = <&can1_rx_pb8 &can1_tx_pb9>;
 	bus-speed = <1000000>;
+	status = "okay";
+};
+
+&adc1 {
 	status = "okay";
 };
