@@ -1,3 +1,9 @@
+/ {
+  	chosen {
+		zephyr,can-primary = &can1;
+	};
+};
+
 &feather_i2c {
 	/* 0x20 */
 	gpio@40 {
@@ -5,4 +11,11 @@
 		status = "okay";
 		reg = <0x40>;
 	};
+};
+
+
+&can1 {
+	pinctrl-0 = <&can1_rx_pb8 &can1_tx_pb9>;
+	bus-speed = <1000000>;
+	status = "okay";
 };
