@@ -1,9 +1,0 @@
-# Beirdo's QWIIC ODBII configuration
-
-# Copyright (c) 2023 Gavin Hurlbut
-# SPDX-License-Identifier: Apache-2.0
-
-config SHIELD_BEIRDO_QWIIC_OBD
-	def_bool $(shields_list_contains,beirdo_qwiic_obd)
-	default "beirdo_qwiic_obd_v1"
-	depends on SHIELD_BEIRDO_QWIIC_OBD_V1

@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 set (BOARD_ROOT "${CMAKE_CURRENT_SOURCE_DIR}")
-set (SHIELD beirdo_qwiic_obd_v1)
+set (SHIELD beirdo_obd_feather_v1)
 
 message(STATUS "${BOARD_ROOT}")
 

@@ -1,0 +1,8 @@
+&feather_i2c {
+	/* 0x20 */
+	gpio@40 {
+		compatible = "ti,tca9534";
+		status = "okay";
+		reg = <0x40>;
+	};
+};
