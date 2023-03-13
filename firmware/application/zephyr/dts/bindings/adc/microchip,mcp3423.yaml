@@ -1,6 +1,0 @@
-description: Microchip MCP3423
-
-compatible: "microchip,mcp3423"
-
-include: microchip,mcp342x-base.yaml
-
