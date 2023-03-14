@@ -92,3 +92,13 @@ void gpio_init(void)
         gpio_pin_configure_dt(spec, GPIO_OUTPUT_INACTIVE);
     }
 }
+
+void gpio_output_set(int index, int value)
+{
+    if (index < 0 || index >= gpio_output_count) {
+        return;
+    }
+
+    struct gpio_dt_spec *spec = &gpio_output_specs[index];
+    gpio_pin_set_dt(spec, value);
+}

@@ -17,6 +17,8 @@
 #define STATE_POLL_THREAD_PRIORITY 2
 #define SLEEP_TIME K_MSEC(250)
 
+#include "modes.h"
+
 #include <logging/log.h>
 LOG_MODULE_REGISTER(can, 3);
 
@@ -61,16 +63,54 @@ void can_rx_thread(void *arg1, void *arg2, void *arg3)
 		.id_mask = 0
 	};
 	struct zcan_frame msg;
-	int filter_id;
-
-	filter_id = can_attach_msgq(can_dev, &can_rx_msgq, &filter);
-	printk("CAN filter id: %d\n", filter_id);
+	int filter_id = -1;
+	int status;
+	operation_mode_t mode = MODE_IDLE;
+	operation_mode_t new_mode;
+	struct can_timing timing;
 
 	while (1) {
-		k_msgq_get(&can_rx_msgq, &msg, K_FOREVER);
+		new_mode = get_operation_mode();
+		if (new_mode != mode) {
+			mode = new_mode;
 
-		/* msg.dlc - length */
-		/* mst.data - buffer */
+			switch (mode) {
+				case MODE_HS_CAN:
+					status = can_calc_timing(can_dev, &timing, 1000000, 875);
+					break;
+				case MODE_MS_CAN:
+					status = can_calc_timing(can_dev, &timing, 250000, 875);
+					break;
+				case MODE_SW_CAN:
+					status = can_calc_timing(can_dev, &timing, 125000, 875);
+					break;
+				default:
+					// Not CAN, disable
+					status = -1;
+					break;
+			}
+			
+			if (status == 0) {
+				can_set_timing(can_dev, &timing, NULL);
+
+				if (filter_id == -1) {
+					filter_id = can_attach_msgq(can_dev, &can_rx_msgq, &filter);
+					printk("CAN filter id: %d\n", filter_id);
+				}
+			} else {
+				if (filter_id != -1) {
+					can_detach(can_dev, filter_id);
+					filter_id = -1;
+				}
+			}
+		}
+
+		status = k_msgq_get(&can_rx_msgq, &msg, K_MSEC(100));
+
+		if (status == 0 && MODE_IS_CAN(mode)) {
+			/* msg.dlc - length */
+			/* mst.data - buffer */
+		}
 	}
 }
 
@@ -94,36 +134,44 @@ void can_poll_state_thread(void *unused1, void *unused2, void *unused3)
 	struct can_bus_err_cnt err_cnt_prev = {0, 0};
 	enum can_state state_prev = CAN_ERROR_ACTIVE;
 	enum can_state state;
+	operation_mode_t mode = MODE_IDLE;
 
 	while (1) {
-		state = can_get_state(can_dev, &err_cnt);
-		if (err_cnt.tx_err_cnt != err_cnt_prev.tx_err_cnt ||
-		    err_cnt.rx_err_cnt != err_cnt_prev.rx_err_cnt ||
-		    state_prev != state) {
+		mode = get_operation_mode();
 
-			err_cnt_prev.tx_err_cnt = err_cnt.tx_err_cnt;
-			err_cnt_prev.rx_err_cnt = err_cnt.rx_err_cnt;
-			state_prev = state;
-			printk("state: %s\n"
-			       "rx error count: %d\n"
-			       "tx error count: %d\n",
-			       state_to_str(state),
-			       err_cnt.rx_err_cnt, err_cnt.tx_err_cnt);
-		} else {
-			k_sleep(K_MSEC(100));
-		}
+		if (MODE_IS_CAN(mode)) {
+			state = can_get_state(can_dev, &err_cnt);
+			if (err_cnt.tx_err_cnt != err_cnt_prev.tx_err_cnt ||
+				err_cnt.rx_err_cnt != err_cnt_prev.rx_err_cnt ||
+				state_prev != state) {
+
+				err_cnt_prev.tx_err_cnt = err_cnt.tx_err_cnt;
+				err_cnt_prev.rx_err_cnt = err_cnt.rx_err_cnt;
+				state_prev = state;
+				printk("state: %s\n"
+					"rx error count: %d\n"
+					"tx error count: %d\n",
+					state_to_str(state),
+					err_cnt.rx_err_cnt, err_cnt.tx_err_cnt);
+				continue;
+			}
+		} 
+		
+		k_sleep(K_MSEC(100));
 	}
 }
 
 void state_change_work_handler(struct k_work *work)
 {
+	operation_mode_t mode = get_operation_mode();
+
 	printk("State Change ISR\nstate: %s\n"
 	       "rx error count: %d\n"
 	       "tx error count: %d\n",
 		state_to_str(current_state),
 		current_err_cnt.rx_err_cnt, current_err_cnt.tx_err_cnt);
 
-	if (current_state == CAN_BUS_OFF) {
+	if (MODE_IS_CAN(mode) && current_state == CAN_BUS_OFF) {
 		printk("Recover from bus-off\n");
 
 		if (can_recover(can_dev, K_MSEC(100)) != 0) {
@@ -143,6 +191,8 @@ void can_tx_thread(void)
 {
 	struct zcan_frame msg;
 	k_tid_t can_rx_tid, can_get_state_tid;
+	int status;
+	operation_mode_t mode = MODE_IDLE;
 
 	can_dev = device_get_binding(DT_CHOSEN_ZEPHYR_CAN_PRIMARY_LABEL);
 
@@ -176,10 +226,14 @@ void can_tx_thread(void)
 	printk("Finished init.\n");
 
 	while (1) {
-		k_msgq_get(&can_tx_msgq, &msg, K_FOREVER);
+		mode = get_operation_mode();
 
-		/* This sending call is blocking until the message is sent. */
-		can_send(can_dev, &msg, K_MSEC(100), NULL, NULL);
+		status = k_msgq_get(&can_tx_msgq, &msg, K_MSEC(100));
+
+		if (status == 0 && MODE_IS_CAN(mode)) {
+			/* This sending call is blocking until the message is sent. */
+			can_send(can_dev, &msg, K_MSEC(100), NULL, NULL);
+		}
 	}
 }
 
