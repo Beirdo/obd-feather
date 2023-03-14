@@ -11,8 +11,8 @@ class OBDPort {
         OBDPort() : _mode(MODE_IDLE) {};
         virtual void begin(void) = 0;
         virtual void setMode(operation_mode_t mode) = 0;
-        virtual bool send(uint32_t id, uint16_t pid, uint8_t *data, uint8_t len) = 0; 
-        virtual bool receive(uint32_t *id, uint16_t *pid, uint8_t *data, uint8_t *len) = 0;
+        virtual bool send(uint32_t id, uint8_t pid, uint8_t *data, uint8_t len) = 0; 
+        virtual bool receive(uint32_t *id, uint8_t *pid, uint8_t *data, uint8_t *len) = 0;
     protected:
         operation_mode_t _mode;
 };
@@ -23,8 +23,8 @@ class OBD2 {
         void begin(void);
         void setMode(operation_mode_t mode);
         operation_mode_t getMode(void);
-        bool send(uint32_t id, uint16_t pid, uint8_t *data, uint8_t len); 
-        bool receive(uint32_t *id, uint16_t *pid, uint8_t *data, uint8_t *len);
+        bool send(uint32_t id, uint8_t pid, uint8_t *data, uint8_t len); 
+        bool receive(uint32_t *id, uint8_t *pid, uint8_t *data, uint8_t *len);
         operation_mode_t scan(int delay_ms);
     protected:
         OBDPort *_port;

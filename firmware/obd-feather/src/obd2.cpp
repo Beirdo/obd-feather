@@ -38,7 +38,7 @@ operation_mode_t OBD2::getMode(void)
     return mode;
 }
 
-bool OBD2::send(uint32_t id, uint16_t pid, uint8_t *data, uint8_t len)
+bool OBD2::send(uint32_t id, uint8_t pid, uint8_t *data, uint8_t len)
 {
     if (_port) {
         return _port->send(id, pid, data, len);
@@ -46,7 +46,7 @@ bool OBD2::send(uint32_t id, uint16_t pid, uint8_t *data, uint8_t len)
     return false;
 }
 
-bool OBD2::receive(uint32_t *id, uint16_t *pid, uint8_t *data, uint8_t *len)
+bool OBD2::receive(uint32_t *id, uint8_t *pid, uint8_t *data, uint8_t *len)
 {
     if (_port) {
         return _port->receive(id, pid, data, len);

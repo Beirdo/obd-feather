@@ -30,8 +30,8 @@ class CANBusPort : public OBDPort {
         CANBusPort() : OBDPort(), _filter_id(-1) {};
         void begin(void);
         void setMode(operation_mode_t mode);
-        bool send(uint32_t id, uint16_t pid, uint8_t *data, uint8_t len); 
-        bool receive(uint32_t *id, uint16_t *pid, uint8_t *data, uint8_t *len);
+        bool send(uint32_t id, uint8_t pid, uint8_t *data, uint8_t len); 
+        bool receive(uint32_t *id, uint8_t *pid, uint8_t *data, uint8_t *len);
 
         friend void canbus_state_change_work_handler(struct k_work *work);
         friend void canbus_state_change_isr(enum can_state state, struct can_bus_err_cnt err_cnt);

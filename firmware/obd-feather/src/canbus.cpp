@@ -215,7 +215,7 @@ void CANBusPort::tx_thread(void)
 	}
 }
 
-bool CANBusPort::send(uint32_t id, uint16_t pid, uint8_t *data, uint8_t len)
+bool CANBusPort::send(uint32_t id, uint8_t pid, uint8_t *data, uint8_t len)
 {
 	if (len >= CAN_MAX_DLEN) {
 		return false;
@@ -229,14 +229,14 @@ bool CANBusPort::send(uint32_t id, uint16_t pid, uint8_t *data, uint8_t len)
 		.dlc = len,
 	};
 
-	msg.data[0] = (uint8_t)(pid & 0xFF);
+	msg.data[0] = pid;
 	memcpy(&msg.data[1], data, len);
 
 	int status = k_msgq_put(&canbus_tx_msgq, &msg, K_FOREVER);
 	return status == 0;
 }
 
-bool CANBusPort::receive(uint32_t *id, uint16_t *pid, uint8_t *data, uint8_t *len)
+bool CANBusPort::receive(uint32_t *id, uint8_t *pid, uint8_t *data, uint8_t *len)
 {
 	return false;
 }
