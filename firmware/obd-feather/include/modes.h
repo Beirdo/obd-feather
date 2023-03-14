@@ -1,6 +1,10 @@
 #ifndef __MODES_H_
 #define __MODES_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <kernel.h>
 
 typedef enum {
@@ -21,5 +25,9 @@ extern struct k_mutex mode_mutex;
 void set_operation_mode(operation_mode_t mode);
 operation_mode_t get_operation_mode(void);
 operation_mode_t scan_operation_modes(int ms_delay);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

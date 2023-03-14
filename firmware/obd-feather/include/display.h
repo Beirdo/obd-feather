@@ -1,13 +1,15 @@
-/*
- *   display.h
- */
-#ifndef __DISPLAY_H
-#define __DISPLAY_H
+#ifndef __DISPLAY_H_
+#define __DISPLAY_H_
 
-/*---------------------------------------------------------------------------*/
-/*                                                                           */
-/*---------------------------------------------------------------------------*/
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void display_init(void);
 void display_play(void);
 
-#endif  /* __DISPLAY_H */
+#ifdef __cplusplus
+}
+#endif
+
+#endif

@@ -1,6 +1,10 @@
 #ifndef __GPIO_MAP_H_
 #define __GPIO_MAP_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <device.h>
 #include <drivers/gpio.h>
 
@@ -30,5 +34,9 @@ typedef enum {
 
 void gpio_init(void);
 void gpio_output_set(int index, int value);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
