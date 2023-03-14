@@ -5,9 +5,10 @@
 };
 
 &feather_i2c {
-	/* 0x20 */
-	external_gpio: gpio@40 {
-		reg = <0x40>;
+  clock-frequency = <I2C_BITRATE_FAST>;
+
+	external_gpio: gpio@20 {
+		reg = <0x20>;
 		compatible = "ti,tca9538";
 		label = "external-gpio";
 		gpio-controller;
@@ -20,15 +21,16 @@
 		reg = <0x3C>;
 		compatible = "solomon,ssd1306fb";
 		label = "SSD1306";
-		height = <128>;
-		width = <64>;
+		height = <64>;
+		width = <128>;
 		display-offset = <0>;
 		segment-offset = <0>;
 		page-offset = <0>;
 		multiplex-ratio = <63>;
+		prechargep = <0x22>;
 		segment-remap;
 		com-invdir;
-		prechargep = <0x22>;
+    com-sequential;
 	};
 };
 

@@ -10,3 +10,12 @@ include($ENV{ZEPHYR_BASE}/cmake/app/boilerplate.cmake NO_POLICY_SCOPE)
 project(OBD_FEATHER)
 
 target_sources(app PRIVATE ../src/main.c)
+target_sources(app PRIVATE ../src/display.c)
+target_sources(app PRIVATE ../src/fonts/font5x7.c)
+target_sources(app PRIVATE ../src/fonts/font8x8.c)
+target_sources(app PRIVATE ../src/fonts/font10x16.c)
+target_sources(app PRIVATE ../src/fonts/font15x24.c)
+target_sources(app PRIVATE ../src/fonts/font20x32.c)
+target_sources(app PRIVATE ../src/can.c)
+
+target_include_directories(app PRIVATE ../include)
