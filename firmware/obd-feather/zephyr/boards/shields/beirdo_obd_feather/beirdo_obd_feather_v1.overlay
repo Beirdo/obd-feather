@@ -34,6 +34,31 @@
 	};
 };
 
+/ {
+  /* RX, TX, SAE_PWM */
+  j1850: node0 {
+      gpios = <&gpiob 11 GPIO_ACTIVE_HIGH>, <&gpiob 10 GPIO_ACTIVE_HIGH>, <&external_gpio 2 GPIO_ACTIVE_HIGH>;
+  };
+
+  /* EN, CAN_SEL0, CAN_SEL1 */
+  can_io: node1 {
+      gpios = <&gpioc 3 GPIO_ACTIVE_LOW>, <&external_gpio 7 GPIO_ACTIVE_HIGH>, <&external_gpio 6 GPIO_ACTIVE_HIGH>;
+  };
+
+  /* SW_CAN_MODE0, SW_CAN_MODE, SW_CAN_LOAD */
+  sw_can_io: node2 {
+      gpios = <&external_gpio 5 GPIO_ACTIVE_HIGH>, <&external_gpio 4 GPIO_ACTIVE_HIGH>, <&external_gpio 3 GPIO_ACTIVE_HIGH>;
+  };
+
+  /* K_LINE_EN, ISO_k */
+  kline_io: node3 {
+      gpios = <&external_gpio 1 GPIO_ACTIVE_HIGH>, <&external_gpio 0 GPIO_ACTIVE_HIGH>;
+  };
+
+  neopixel: node4 {
+      gpios = <&gpioc 0 GPIO_ACTIVE_HIGH>;
+  };
+};
 
 &can1 {
 	pinctrl-0 = <&can1_rx_pb8 &can1_tx_pb9>;
