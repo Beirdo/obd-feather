@@ -17,5 +17,6 @@ target_sources(app PRIVATE ../src/fonts/font10x16.c)
 target_sources(app PRIVATE ../src/fonts/font15x24.c)
 target_sources(app PRIVATE ../src/fonts/font20x32.c)
 target_sources(app PRIVATE ../src/can.c)
+target_sources(app PRIVATE ../src/gpio_map.c)
 
 target_include_directories(app PRIVATE ../include)
