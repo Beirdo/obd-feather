@@ -4,13 +4,39 @@
 #include "gpio_map.h"
 #include "modes.h"
 #include "canbus.h"
+#include "kline.h"
+
+#include <logging/log.h>
+LOG_MODULE_REGISTER(obd2, 3);
 
 OBD2 obd2;
+
+K_THREAD_STACK_DEFINE(obd2_rx_thread_stack, OBD2_RX_THREAD_STACK_SIZE);
+K_THREAD_STACK_DEFINE(obd2_tx_thread_stack, OBD2_TX_THREAD_STACK_SIZE);
+
+K_MSGQ_DEFINE(obd2_rx_msgq, sizeof(obd_packet_t), 32, 4);
+K_MSGQ_DEFINE(obd2_tx_msgq, sizeof(obd_packet_t), 32, 4);
 
 void OBD2::begin(void)
 {
     _port = 0;
     _mode = MODE_IDLE;
+
+    _rx_tid = k_thread_create(&_rx_thread_data, obd2_rx_thread_stack,
+				    K_THREAD_STACK_SIZEOF(obd2_rx_thread_stack),
+				    obd2_rx_thread, NULL, NULL, NULL,
+				    OBD2_RX_THREAD_PRIORITY, 0, K_NO_WAIT);
+	if (!_rx_tid) {
+		printk("ERROR spawning rx thread\n");
+	}
+
+	_tx_tid = k_thread_create(&_tx_thread_data, obd2_tx_thread_stack,
+				    K_THREAD_STACK_SIZEOF(obd2_tx_thread_stack),
+				    obd2_tx_thread, NULL, NULL, NULL,
+				    OBD2_TX_THREAD_PRIORITY, 0, K_NO_WAIT);
+	if (!_tx_tid) {
+		printk("ERROR spawning tx thread\n");
+	}
 }
 
 void OBD2::setMode(operation_mode_t mode)
@@ -38,20 +64,17 @@ operation_mode_t OBD2::getMode(void)
     return mode;
 }
 
-bool OBD2::send(uint32_t id, uint8_t pid, uint8_t *data, uint8_t len)
+bool OBD2::send(obd_packet_t *packet)
 {
     if (_port) {
-        return _port->send(id, pid, data, len);
+        return k_msgq_put(&obd2_tx_msgq, packet, K_FOREVER);
     }
     return false;
 }
 
-bool OBD2::receive(uint32_t *id, uint8_t *pid, uint8_t *data, uint8_t *len)
+bool OBD2::receive(obd_packet_t *packet)
 {
-    if (_port) {
-        return _port->receive(id, pid, data, len);
-    }
-    return false;
+    return k_msgq_put(&obd2_rx_msgq, packet, K_FOREVER);
 }
 
 void OBD2::enable(operation_mode_t mode)
@@ -74,9 +97,12 @@ void OBD2::enable(operation_mode_t mode)
             gpio_output_set(GPIO_CAN_SEL1, GPIO_OUTPUT_ACTIVE);
             _port = &canbus;
             break;
-        case MODE_K_LINE:
+        case MODE_ISO9141_5BAUD_INIT:
+        case MODE_ISO14230_5BAUD_INIT:
+        case MODE_ISO14230_FAST_INIT:
             gpio_output_set(GPIO_KLINE_EN, GPIO_OUTPUT_ACTIVE);
             gpio_output_set(GPIO_ISO_K, GPIO_OUTPUT_ACTIVE);
+            _port = &kline;
             break;
         case MODE_J1850_PWM:
         case MODE_J1850_VPW:
@@ -111,7 +137,9 @@ void OBD2::disable(void)
             gpio_output_set(GPIO_CAN_SEL0, GPIO_OUTPUT_INACTIVE);
             gpio_output_set(GPIO_CAN_SEL1, GPIO_OUTPUT_INACTIVE);
             break;
-        case MODE_K_LINE:
+        case MODE_ISO9141_5BAUD_INIT:
+        case MODE_ISO14230_5BAUD_INIT:
+        case MODE_ISO14230_FAST_INIT:
             gpio_output_set(GPIO_KLINE_EN, GPIO_OUTPUT_INACTIVE);
             break;
         case MODE_J1850_PWM:
@@ -143,6 +171,39 @@ operation_mode_t OBD2::scan(int delay_ms)
     }
 }
 
+void OBD2::tx_thread(void)
+{
+    obd_packet_t packet;
+    int status;
+
+    while (1) {
+        status = k_msgq_get(&obd2_tx_msgq, &packet, K_FOREVER);
+        if (status != 0) {
+            continue;
+        }
+
+        if (_port) {
+            _port->send(&packet);
+        }
+    }
+}
+
+void OBD2::rx_thread(void)
+{
+    obd_packet_t packet;
+    int status;
+
+    while (1) {
+        status = k_msgq_get(&obd2_rx_msgq, &packet, K_FOREVER);
+        if (status != 0) {
+            continue;
+        }
+
+        // do something
+
+    }
+}
+
 void obd2_init(void)
 {
     obd2.begin();
@@ -162,3 +223,22 @@ operation_mode_t scan_operation_modes(int delay_ms)
 {
     return obd2.scan(delay_ms);
 }
+
+void obd2_rx_thread(void *arg1, void *arg2, void *arg3) 
+{
+	ARG_UNUSED(arg1);
+	ARG_UNUSED(arg2);
+	ARG_UNUSED(arg3);
+
+	obd2.rx_thread();
+}
+
+void obd2_tx_thread(void *arg1, void *arg2, void *arg3) 
+{
+	ARG_UNUSED(arg1);
+	ARG_UNUSED(arg2);
+	ARG_UNUSED(arg3);
+
+	obd2.tx_thread();
+}
+

@@ -43,3 +43,12 @@
 &adc1 {
 	status = "okay";
 };
+
+/* KLine */
+&usart6 {
+  compatible = "st,stm32-usart";
+  pinctrl-0 = <&usart6_tx_pc6 &usart6_rx_pc7>;
+  current-speed = <10400>;
+  status = "okay";
+};
+
