@@ -2,9 +2,14 @@
 #define __OBD2_H_
 
 #ifdef __cplusplus
+extern "C" {
+#endif
 
 #include <zephyr.h>
 #include "modes.h"
+
+#ifdef __cplusplus
+}
 
 #define OBD2_TX_THREAD_STACK_SIZE 256
 #define OBD2_TX_THREAD_PRIORITY 2

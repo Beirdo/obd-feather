@@ -11,6 +11,7 @@
 #include <device.h>
 #include <drivers/can.h>
 
+#include "gpio_map.h"
 #include "modes.h"
 #include "canbus.h"
 
@@ -34,6 +35,8 @@ void CANBusPort::begin(void)
 		printk("CAN: Device driver not found.\n");
 		return;
 	}
+
+	setMode(MODE_IDLE);
 
     k_work_init(&_state_change_work, canbus_state_change_work_handler);
 
@@ -72,7 +75,7 @@ void CANBusPort::setMode(operation_mode_t mode)
 	int status;
 	struct can_timing timing;
 
-	if (mode == _mode) {
+	if (mode == _mode && mode != MODE_IDLE) {
 		return;
 	}
 
@@ -80,14 +83,26 @@ void CANBusPort::setMode(operation_mode_t mode)
 
 	switch (_mode) {
 		case MODE_HS_CAN:
+			gpio_output_set(GPIO_CAN_SEL0, false);
+            gpio_output_set(GPIO_CAN_SEL1, true);
+            gpio_output_set(GPIO_CAN_EN, true);
 			status = can_calc_timing(_dev, &timing, 500000, 875);
 			break;
+
 		case MODE_MS_CAN:
+			gpio_output_set(GPIO_CAN_SEL0, true);
+            gpio_output_set(GPIO_CAN_SEL1, false);
+            gpio_output_set(GPIO_CAN_EN, true);
 			status = can_calc_timing(_dev, &timing, 125000, 875);
 			break;
+
 		case MODE_SW_CAN:
+            gpio_output_set(GPIO_CAN_SEL0, true);
+            gpio_output_set(GPIO_CAN_SEL1, true);
+            gpio_output_set(GPIO_CAN_EN, false);
 			status = can_calc_timing(_dev, &timing, 83333, 875);
 			break;
+
 		default:
 			// Not CAN, disable
 			status = -1;
@@ -114,6 +129,10 @@ void CANBusPort::setMode(operation_mode_t mode)
 			can_detach(_dev, _filter_id);
 			_filter_id = -1;
 		}
+
+		gpio_output_set(GPIO_CAN_EN, false);
+		gpio_output_set(GPIO_CAN_SEL0, false);
+		gpio_output_set(GPIO_CAN_SEL1, false); 
 	}
 }
 

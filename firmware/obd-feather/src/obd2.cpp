@@ -5,6 +5,7 @@
 #include "modes.h"
 #include "canbus.h"
 #include "kline.h"
+#include "j1850.h"
 
 #include <logging/log.h>
 LOG_MODULE_REGISTER(obd2, 3);
@@ -79,79 +80,30 @@ bool OBD2::receive(obd_packet_t *packet)
 
 void OBD2::enable(operation_mode_t mode)
 {
-    switch (mode) {
-        case MODE_HS_CAN:
-            gpio_output_set(GPIO_CAN_SEL0, false);
-            gpio_output_set(GPIO_CAN_SEL1, true);
-            gpio_output_set(GPIO_CAN_EN, true);
-            _port = &canbus;
-            break;
-        case MODE_MS_CAN:
-            gpio_output_set(GPIO_CAN_SEL0, true);
-            gpio_output_set(GPIO_CAN_SEL1, false);
-            gpio_output_set(GPIO_CAN_EN, true);
-            _port = &canbus;
-            break;
-        case MODE_SW_CAN:
-            gpio_output_set(GPIO_CAN_SEL0, true);
-            gpio_output_set(GPIO_CAN_SEL1, true);
-            _port = &canbus;
-            break;
-        case MODE_ISO9141_5BAUD_INIT:
-        case MODE_ISO14230_5BAUD_INIT:
-        case MODE_ISO14230_FAST_INIT:
-            gpio_output_set(GPIO_KLINE_EN, true);
-            gpio_output_set(GPIO_ISO_K, true);
-            _port = &kline;
-            break;
-        case MODE_J1850_PWM:
-            gpio_output_set(GPIO_SAE_PWM, true);
-            gpio_output_set(GPIO_J1850_TX, false);
-            break;
-        case MODE_J1850_VPW:
-            gpio_output_set(GPIO_SAE_PWM, false);
-            gpio_output_set(GPIO_J1850_TX, false);
-            break;
-        default:
-            _port = 0;
-            break;
+    if (MODE_IS_CAN(mode)) {
+        _port = &canbus;
+    } else if (MODE_IS_KLINE(mode)) {
+        _port = &kline;
+    } else if (MODE_IS_J1850(mode)) {
+        _port = &j1850;
+    } else {
+        _port = 0;
     }
 
     if (_port) {
+        _port->setMode(mode);
         _mode = mode;
-        _port->setMode(_mode);
+    } else {
+        _mode = MODE_IDLE;
     }
 }
 
 void OBD2::disable(void)
 {
     if (_port) {
+        _mode = MODE_IDLE;    
         _port->setMode(MODE_IDLE);
         _port = 0;
-    }
-
-    operation_mode_t mode = _mode;
-    _mode = MODE_IDLE;    
-
-    switch (mode) {
-        case MODE_HS_CAN:
-        case MODE_MS_CAN:
-        case MODE_SW_CAN:
-            gpio_output_set(GPIO_CAN_EN, false);
-            gpio_output_set(GPIO_CAN_SEL0, false);
-            gpio_output_set(GPIO_CAN_SEL1, false);
-            break;
-        case MODE_ISO9141_5BAUD_INIT:
-        case MODE_ISO14230_5BAUD_INIT:
-        case MODE_ISO14230_FAST_INIT:
-            gpio_output_set(GPIO_KLINE_EN, false);
-            break;
-        case MODE_J1850_PWM:
-        case MODE_J1850_VPW:
-            gpio_output_set(GPIO_J1850_TX, false);
-            break;
-        default:
-            break;
     }
 }
 

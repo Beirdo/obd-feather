@@ -42,6 +42,8 @@ void J1850Port::begin(void)
 {
 	k_sem_init(&_tx_done_sem, 0, 1);
 
+	setMode(MODE_IDLE);
+
 	_rx_tid = k_thread_create(&_rx_thread_data, j1850_rx_thread_stack,
 				    K_THREAD_STACK_SIZEOF(j1850_rx_thread_stack),
 				    j1850_rx_thread, NULL, NULL, NULL,
@@ -63,7 +65,7 @@ void J1850Port::begin(void)
 
 void J1850Port::setMode(operation_mode_t mode)
 {
-	if (mode == _mode) {
+	if (mode == _mode && mode != MODE_IDLE) {
 		return;
 	}
 
@@ -73,11 +75,22 @@ void J1850Port::setMode(operation_mode_t mode)
 	_rx_buffer_index = 0;
 
 	if (MODE_IS_J1850(_mode)) {
-		gpio_irq_enable(0);
+		if (MODE_IS_PWM(_mode)) {
+			gpio_output_set(GPIO_SAE_PWM, true);
+            gpio_output_set(GPIO_J1850_TX, false);
+		} else {
+			gpio_output_set(GPIO_SAE_PWM, false);
+            gpio_output_set(GPIO_J1850_TX, false);
+		}
+
+		gpio_irq_enable(GPIO_J1850_RX);
 		_abort = false;
 		_initialized = true;
 	} else {
-		gpio_irq_disable(0);
+		gpio_output_set(GPIO_SAE_PWM, true);
+		gpio_output_set(GPIO_J1850_TX, false);
+
+		gpio_irq_disable(GPIO_J1850_RX);
 		_abort = true;
 		_initialized = false;
 	}
@@ -522,7 +535,7 @@ int J1850Port::write(uint8_t *buffer, uint8_t len)
 			_last_edge = k_cycle_get_32();
 		}
 
-		gpio_output_set(0, _last_level);
+		gpio_output_set(GPIO_J1850_TX, _last_level);
 	
 		const j1850_timing_t *timing = MODE_IS_PWM(_mode) ? &_pwm_timing[_timing_index] : &_vpw_timing[_timing_index];
 		k_busy_wait((uint32_t)timing->nom);
@@ -569,7 +582,7 @@ void J1850Port::rx_callback(void)
 {
 	j1850_bit_t bit = {
 		.timestamp = k_cycle_get_32(),
-		.value = gpio_input_get(0),
+		.value = gpio_input_get(GPIO_J1850_RX),
 	};
 
 	k_msgq_put(&j1850_rx_bit_msgq, &bit, K_NO_WAIT);

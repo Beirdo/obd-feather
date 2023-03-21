@@ -10,6 +10,7 @@
 #include <device.h>
 #include <drivers/uart.h>
 
+#include "gpio_map.h"
 #include "modes.h"
 #include "kline.h"
 
@@ -54,8 +55,7 @@ void KLinePort::begin(void)
 
 	uart_callback_set(_dev, kline_uart_callback, this);
 
-	_mode = MODE_IDLE;
-	disable();
+	setMode(MODE_IDLE);
 
 	k_sem_init(&_tx_done_sem, 0, 1);
 	k_sem_init(&_rx_rdy_sem, 0, 1);
@@ -81,13 +81,16 @@ void KLinePort::begin(void)
 
 void KLinePort::setMode(operation_mode_t mode)
 {
-	if (mode == _mode) {
+	if (mode == _mode && mode != MODE_IDLE) {
 		return;
 	}
 
 	_mode = mode;
 
 	if (MODE_IS_KLINE(_mode)) {
+		gpio_output_set(GPIO_KLINE_EN, true);
+		gpio_output_set(GPIO_ISO_K, true);
+
 		init();
 
 		if (!_initialized) {
@@ -97,6 +100,9 @@ void KLinePort::setMode(operation_mode_t mode)
 	
 	if (!MODE_IS_KLINE(_mode)) {
 		disable();
+
+		gpio_output_set(GPIO_KLINE_EN, false);
+		gpio_output_set(GPIO_ISO_K, false);
 	}
 }
 
