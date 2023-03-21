@@ -45,7 +45,7 @@ bool KLinePort::configure(uint32_t baud)
 void KLinePort::begin(void)
 {
 	_initialized = false;
-	_dev = device_get_binding("UART_6");
+	_dev = DEVICE_DT_GET(DT_NODELABEL(usart6));
 
 	if (!_dev) {
 		printk("KLine: Device driver not found.\n");

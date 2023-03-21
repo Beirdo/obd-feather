@@ -81,32 +81,36 @@ void OBD2::enable(operation_mode_t mode)
 {
     switch (mode) {
         case MODE_HS_CAN:
-            gpio_output_set(GPIO_CAN_SEL0, GPIO_OUTPUT_INACTIVE);
-            gpio_output_set(GPIO_CAN_SEL1, GPIO_OUTPUT_ACTIVE);
-            gpio_output_set(GPIO_CAN_EN, GPIO_OUTPUT_ACTIVE);
+            gpio_output_set(GPIO_CAN_SEL0, false);
+            gpio_output_set(GPIO_CAN_SEL1, true);
+            gpio_output_set(GPIO_CAN_EN, true);
             _port = &canbus;
             break;
         case MODE_MS_CAN:
-            gpio_output_set(GPIO_CAN_SEL0, GPIO_OUTPUT_ACTIVE);
-            gpio_output_set(GPIO_CAN_SEL1, GPIO_OUTPUT_INACTIVE);
-            gpio_output_set(GPIO_CAN_EN, GPIO_OUTPUT_ACTIVE);
+            gpio_output_set(GPIO_CAN_SEL0, true);
+            gpio_output_set(GPIO_CAN_SEL1, false);
+            gpio_output_set(GPIO_CAN_EN, true);
             _port = &canbus;
             break;
         case MODE_SW_CAN:
-            gpio_output_set(GPIO_CAN_SEL0, GPIO_OUTPUT_ACTIVE);
-            gpio_output_set(GPIO_CAN_SEL1, GPIO_OUTPUT_ACTIVE);
+            gpio_output_set(GPIO_CAN_SEL0, true);
+            gpio_output_set(GPIO_CAN_SEL1, true);
             _port = &canbus;
             break;
         case MODE_ISO9141_5BAUD_INIT:
         case MODE_ISO14230_5BAUD_INIT:
         case MODE_ISO14230_FAST_INIT:
-            gpio_output_set(GPIO_KLINE_EN, GPIO_OUTPUT_ACTIVE);
-            gpio_output_set(GPIO_ISO_K, GPIO_OUTPUT_ACTIVE);
+            gpio_output_set(GPIO_KLINE_EN, true);
+            gpio_output_set(GPIO_ISO_K, true);
             _port = &kline;
             break;
         case MODE_J1850_PWM:
+            gpio_output_set(GPIO_SAE_PWM, true);
+            gpio_output_set(GPIO_J1850_TX, false);
+            break;
         case MODE_J1850_VPW:
-            gpio_output_set(GPIO_J1850_TX, GPIO_OUTPUT_INACTIVE);
+            gpio_output_set(GPIO_SAE_PWM, false);
+            gpio_output_set(GPIO_J1850_TX, false);
             break;
         default:
             _port = 0;
@@ -133,18 +137,18 @@ void OBD2::disable(void)
         case MODE_HS_CAN:
         case MODE_MS_CAN:
         case MODE_SW_CAN:
-            gpio_output_set(GPIO_CAN_EN, GPIO_OUTPUT_INACTIVE);
-            gpio_output_set(GPIO_CAN_SEL0, GPIO_OUTPUT_INACTIVE);
-            gpio_output_set(GPIO_CAN_SEL1, GPIO_OUTPUT_INACTIVE);
+            gpio_output_set(GPIO_CAN_EN, false);
+            gpio_output_set(GPIO_CAN_SEL0, false);
+            gpio_output_set(GPIO_CAN_SEL1, false);
             break;
         case MODE_ISO9141_5BAUD_INIT:
         case MODE_ISO14230_5BAUD_INIT:
         case MODE_ISO14230_FAST_INIT:
-            gpio_output_set(GPIO_KLINE_EN, GPIO_OUTPUT_INACTIVE);
+            gpio_output_set(GPIO_KLINE_EN, false);
             break;
         case MODE_J1850_PWM:
         case MODE_J1850_VPW:
-            gpio_output_set(GPIO_J1850_TX, GPIO_OUTPUT_INACTIVE);
+            gpio_output_set(GPIO_J1850_TX, false);
             break;
         default:
             break;

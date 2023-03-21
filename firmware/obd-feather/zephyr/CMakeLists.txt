@@ -18,5 +18,6 @@ target_sources(app PRIVATE ../src/gpio_map.c)
 target_sources(app PRIVATE ../src/obd2.cpp)
 target_sources(app PRIVATE ../src/canbus.cpp)
 target_sources(app PRIVATE ../src/kline.cpp)
+target_sources(app PRIVATE ../src/j1850.cpp)
 
 target_include_directories(app PRIVATE ../include)

@@ -9,10 +9,10 @@ extern "C" {
 #include <drivers/gpio.h>
 
 extern struct gpio_dt_spec gpio_input_specs[];
-extern int gpio_input_count;
+extern const int gpio_input_count;
 
 extern struct gpio_dt_spec gpio_output_specs[];
-extern int gpio_output_count;
+extern const int gpio_output_count;
 
 typedef enum {
     GPIO_J1850_RX = 0,
@@ -33,7 +33,11 @@ typedef enum {
 } gpio_output_t;
 
 void gpio_init(void);
-void gpio_output_set(int index, int value);
+void gpio_output_set(int index, bool value);
+bool gpio_input_get(int index);
+void gpio_irq_enable(int index);
+void gpio_irq_disable(int index);
+
 
 #ifdef __cplusplus
 }

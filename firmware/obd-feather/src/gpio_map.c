@@ -1,7 +1,9 @@
 #include <device.h>
 #include <drivers/gpio.h>
+#include <stdlib.h>
 
 #include "gpio_map.h"
+#include "j1850.h"
 
 
 struct gpio_dt_spec gpio_input_specs[] = {
@@ -12,8 +14,12 @@ struct gpio_dt_spec gpio_input_specs[] = {
     },
 };
 
-int gpio_input_count = sizeof(gpio_input_specs) / sizeof(gpio_input_specs[0]);
+const int gpio_input_count = sizeof(gpio_input_specs) / sizeof(gpio_input_specs[0]);
 
+struct gpio_callback *gpio_input_callbacks;
+gpio_callback_handler_t gpio_input_handlers[] = {
+    j1850_rx_callback,
+};
 
 struct gpio_dt_spec gpio_output_specs[] = {
     {   // J1850_TX
@@ -73,17 +79,22 @@ struct gpio_dt_spec gpio_output_specs[] = {
     },
 };
 
-int gpio_output_count = sizeof(gpio_output_specs) / sizeof(gpio_output_specs[0]);
-
+const int gpio_output_count = sizeof(gpio_output_specs) / sizeof(gpio_output_specs[0]);
 
 void gpio_init(void)
 {
     int i;
 
+    gpio_input_callbacks = (struct gpio_callback *)malloc(sizeof(struct gpio_callback) * gpio_input_count);
+
     for (i = 0; i < gpio_input_count; i++) {
         struct gpio_dt_spec *spec = &gpio_input_specs[i];
 
         gpio_pin_configure_dt(spec, GPIO_INPUT);
+        
+        gpio_pin_interrupt_configure_dt(spec, GPIO_INT_EDGE_BOTH);
+        gpio_init_callback(&gpio_input_callbacks[i], gpio_input_handlers[i], 0);
+        gpio_add_callback(spec->port, &gpio_input_callbacks[i]);
     }
 
     for (i = 0; i < gpio_output_count; i++) {
@@ -93,7 +104,7 @@ void gpio_init(void)
     }
 }
 
-void gpio_output_set(int index, int value)
+void gpio_output_set(int index, bool value)
 {
     if (index < 0 || index >= gpio_output_count) {
         return;
@@ -101,4 +112,33 @@ void gpio_output_set(int index, int value)
 
     struct gpio_dt_spec *spec = &gpio_output_specs[index];
     gpio_pin_set_dt(spec, value);
+}
+
+bool gpio_input_get(int index)
+{
+    if (index < 0 || index >= gpio_input_count) {
+        return false;
+    }
+
+    struct gpio_dt_spec *spec = &gpio_input_specs[index];
+    return gpio_pin_get_dt(spec);
+}
+
+void gpio_irq_enable(int index)
+{
+    if (index < 0 || index >= gpio_input_count) {
+        return;
+    }
+
+    struct gpio_dt_spec *spec = &gpio_input_specs[index];
+    gpio_input_callbacks[index].pin_mask = 1 << spec->pin;
+}
+
+void gpio_irq_disable(int index)
+{
+    if (index < 0 || index >= gpio_input_count) {
+        return;
+    }
+
+    gpio_input_callbacks[index].pin_mask = 0;
 }

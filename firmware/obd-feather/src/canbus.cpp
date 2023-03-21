@@ -28,7 +28,7 @@ CAN_DEFINE_MSGQ(canbus_tx_msgq, 32);
 
 void CANBusPort::begin(void)
 {
-	_dev = device_get_binding(DT_CHOSEN_ZEPHYR_CAN_PRIMARY_LABEL);
+	_dev = DEVICE_DT_GET(DT_NODELABEL(can1));
 
 	if (!_dev) {
 		printk("CAN: Device driver not found.\n");

@@ -25,6 +25,8 @@ typedef enum {
 #define MODE_IS_ISO9141(x)  ((x) == MODE_ISO9141_5BAUD_INIT)
 
 #define MODE_IS_J1850(x)    ((x) == MODE_J1850_PWM || (x) == MODE_J1850_VPW)
+#define MODE_IS_PWM(x)      ((x) == MODE_J1850_PWM)
+#define MODE_IS_VPW(x)      ((x) == MODE_J1850_VPW)
 
 extern struct k_mutex mode_mutex;
 
