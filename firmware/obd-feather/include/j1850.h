@@ -148,7 +148,7 @@ class J1850Port : public OBDPort {
 
         void processPWM(uint32_t duration, bool level);
         void processVPW(uint32_t duration, bool level);
-        static bool isInTiming(const j1850_timing_t *timings, uint8_t index, uint32_t duration);
+        static bool isInTiming(const j1850_timing_t *timings, j1850_timing_index_t index, uint32_t duration);
 };
 
 extern J1850Port j1850;

@@ -74,9 +74,11 @@ void J1850Port::setMode(operation_mode_t mode)
 
 	if (MODE_IS_J1850(_mode)) {
 		gpio_irq_enable(0);
+		_abort = false;
 		_initialized = true;
 	} else {
 		gpio_irq_disable(0);
+		_abort = true;
 		_initialized = false;
 	}
 }
@@ -181,9 +183,9 @@ void J1850Port::rx_bit_thread(void)
 	}
 }
 
-bool J1850Port::isInTiming(const j1850_timing_t *timings, uint8_t index, uint32_t duration)
+bool J1850Port::isInTiming(const j1850_timing_t *timings, j1850_timing_index_t index, uint32_t duration)
 {
-  index = index > INDEX_COUNT - 1 ? INDEX_COUNT -1 : index; 
+  index = index > INDEX_COUNT - 1 ? static_cast<j1850_timing_index_t>(INDEX_COUNT - 1) : index; 
   int16_t value = duration > 32767 ? 32767 : duration;
   
   const j1850_timing_t *timing = timings + index;
@@ -377,8 +379,12 @@ void J1850Port::tx_thread(void)
 		if (status == 0 && MODE_IS_KLINE(_mode) && _initialized) {
 			// Start the actual send
 			write(buffer.data, buffer.length);
-			status = k_sem_take(&_tx_done_sem, K_FOREVER);
+			status = k_sem_take(&_tx_done_sem, K_MSEC(1000));
 			k_sleep(K_MSEC(30));
+		} else if (_abort) {
+			write(0, 0);
+			status = k_sem_take(&_tx_done_sem, K_MSEC(1000));
+			_abort = false;
 		}
 	}
 }
@@ -439,14 +445,18 @@ int J1850Port::write(uint8_t *buffer, uint8_t len)
 		return 0;
 	}
 
-	memcpy(_tx_buffer, buffer, len);
+	if (len > 0) {
+		memcpy(_tx_buffer, buffer, len);
+	}
+	
 	_tx_buffer_len = len;
 	_tx_buffer_index = 0;
 	_transmitting = true;
 	_tx_shift_reg = 0x00;
 	_tx_bit_count = 0;
+	_timing_index = INDEX_SOF_1;
 
-	const j1850_timing_t *timing = MODE_IS_PWM(_mode) ? &_pwm_timing[_timing_index] : &_vpw_timing[_timing_index];
+	_timing_index = get_next_tx_index();
 
 	while (_transmitting) {
 		switch (_timing_index) {
@@ -513,6 +523,8 @@ int J1850Port::write(uint8_t *buffer, uint8_t len)
 		}
 
 		gpio_output_set(0, _last_level);
+	
+		const j1850_timing_t *timing = MODE_IS_PWM(_mode) ? &_pwm_timing[_timing_index] : &_vpw_timing[_timing_index];
 		k_busy_wait((uint32_t)timing->nom);
 	}
 
