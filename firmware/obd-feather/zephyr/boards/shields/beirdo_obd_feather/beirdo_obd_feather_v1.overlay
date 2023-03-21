@@ -1,8 +1,42 @@
+// /delete-node/ &storage_partition;
+
 / {
   	chosen {
 		zephyr,can-primary = &can1;
 	};
+
+/*
+	fstab {
+		compatible = "zephyr,fstab";
+		lfs1: lfs1 {
+			compatible = "zephyr,fstab,littlefs";
+			mount-point = "/lfs1";
+			partition = <&lfs1_part>;
+			automount;
+			read-size = <16>;
+			prog-size = <16>;
+			cache-size = <64>;
+			lookahead-size = <32>;
+			block-cycles = <512>;
+		};
+	};
+*/
+
+	soc {
+		sdmmc1: sdio@40012c00 {
+			compatible = "st,stm32-sdmmc";
+			reg = < 0x40012C00 0x400 >;
+			clocks = < &rcc 0x3 0x800 >;
+			interrupts = < 0x31 0x4 >;
+			label = "SDMMC_1";
+			status = "okay";
+			cd-gpios = <&gpiob 12 GPIO_ACTIVE_HIGH>;
+			pinctrl-0 = <&sdio_d0_pc8 &sdio_d1_pc9 &sdio_d2_pc10 &sdio_d3_pc11
+						&sdio_ck_pc12 &sdio_cmd_pd2>;
+		};
+	};
 };
+
 
 &feather_i2c {
   clock-frequency = <I2C_BITRATE_FAST>;
@@ -30,7 +64,7 @@
 		prechargep = <0x22>;
 		segment-remap;
 		com-invdir;
-    com-sequential;
+    	com-sequential;
 	};
 };
 
